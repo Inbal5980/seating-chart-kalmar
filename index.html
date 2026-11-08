@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>סידור ישיבה | קלמר המורה – בית הספר הווירטואלי</title>
+<meta name="description" content="יישומון לבניית מפת הושבה לכיתה: רשימת תלמידים, מבנה כיתה, אילוצים, סידורים אוטומטיים, גרירה, גרסאות והדפסה.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --magenta:#B0437E; --navy:#204B67; --pink:#F4CDFF; --sky:#BEE9FF; --teal:#22BEC6; --lav:#BBA9E0; --olive:#A8BD63; --sun:#FDDB71;
+  --white:#FFFFFF; --g1:#F6F6F6; --g2:#D9D9D9; --g3:#727272; --g4:#404040; --g5:#272727; --cta:#6200FF;
+  --r-l:20px; --r-m:10px; --r-s:5px;
+  --sh-card:0 0 4px rgba(0,0,0,.18); --sh-btn:0 3px 7px rgba(108,90,189,.25);
+  --font:'Rubik','Segoe UI','Arial Hebrew',Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font);font-size:15px;color:var(--g4);background:var(--g1);line-height:1.45}
+button,input,select,textarea{font-family:inherit;font-size:15px;color:inherit}
+h1,h2,h3{margin:0;font-weight:600;color:var(--navy)}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--cta);outline-offset:2px}
+svg.i{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* header */
+.app-header{background:var(--white);box-shadow:var(--sh-card);position:relative;z-index:2}
+.app-header .in{max-width:1600px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:10px 24px;flex-wrap:wrap}
+.app-header img{height:48px;width:auto}
+.app-header .ttl{display:flex;flex-direction:column}
+.app-header h1{font-size:26px;color:var(--magenta);font-weight:700;line-height:1.15}
+.app-header .sub{font-size:14px;color:var(--g3)}
+.privacy{margin-inline-start:auto;display:flex;align-items:center;gap:8px;background:#E8F7FF;color:var(--navy);border-radius:999px;padding:6px 14px;font-size:14px}
+.privacy svg{width:18px;height:18px}
+
+/* layout */
+.wrap{max-width:1600px;margin:0 auto;padding:20px 24px 32px;display:grid;grid-template-columns:minmax(340px,400px) 1fr;gap:20px;align-items:start}
+.card{background:var(--white);border-radius:var(--r-l);box-shadow:var(--sh-card);padding:20px}
+.side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;padding:0}
+.side .tabs{position:sticky;top:0;background:var(--white);z-index:1;border-radius:var(--r-l) var(--r-l) 0 0}
+.panel{padding:18px 20px 22px}
+h2{font-size:20px;margin-bottom:10px}
+h3{font-size:17px;margin:18px 0 8px}
+.muted{color:var(--g3);font-size:14px}
+.small{font-size:14px}
+
+/* tabs (brand: underline) */
+.tabs{display:flex;border-bottom:1px solid var(--g2);padding:0 8px}
+.tab{flex:1;background:none;border:0;border-bottom:3px solid transparent;padding:14px 4px 11px;cursor:pointer;color:var(--g3);font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px}
+.tab:hover{color:var(--cta)}
+.tab[aria-selected=true]{color:var(--cta);border-bottom-color:var(--cta)}
+.tab .badge{font-size:12px;background:var(--g1);color:var(--g3);border-radius:999px;padding:0 7px;min-width:22px}
+.tab[aria-selected=true] .badge{background:#EFE5FF;color:var(--cta)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--cta);background:var(--cta);color:#fff;padding:9px 20px;font-weight:500;cursor:pointer;box-shadow:var(--sh-btn);min-height:42px;transition:filter .15s,transform .05s;white-space:nowrap}
+.btn:hover{filter:brightness(1.12)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;filter:none}
+.btn.sec{background:#fff;color:var(--cta)}
+.btn.ghost{background:transparent;color:var(--cta);border-color:transparent;box-shadow:none;padding:8px 12px}
+.btn.danger{background:#fff;color:#C0392B;border-color:#E6A39B;box-shadow:none}
+.btn.big{font-size:17px;padding:11px 26px;min-height:48px}
+.btn.sm{padding:5px 12px;min-height:34px;font-size:14px}
+.icon-btn{background:none;border:0;border-radius:999px;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g3)}
+.icon-btn:hover{background:var(--g1);color:var(--cta)}
+.icon-btn.del:hover{color:#C0392B}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.stack{display:flex;flex-direction:column;gap:10px}
+
+/* fields */
+label.f{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--g4);font-weight:500}
+input[type=text],input[type=number],select,textarea{border:1px solid var(--g2);border-radius:var(--r-m);background:#fff;padding:9px 12px;min-height:42px;width:100%}
+textarea{resize:vertical;min-height:90px;line-height:1.5}
+input:focus,select:focus,textarea:focus{border-color:var(--cta);outline:none;box-shadow:0 0 0 3px rgba(98,0,255,.15)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:end}
+
+/* segmented toggle */
+.seg{display:flex;flex-wrap:wrap;gap:6px;background:var(--g1);border-radius:999px;padding:4px}
+.seg button{flex:1 1 auto;border:0;background:transparent;border-radius:999px;padding:8px 12px;cursor:pointer;color:var(--g4);font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--cta);color:#fff;box-shadow:var(--sh-btn)}
+.seg.lay{border-radius:var(--r-m);display:grid;grid-template-columns:1fr 1fr}
+.seg.lay button{border-radius:var(--r-m);flex-direction:column;padding:10px 6px;gap:4px}
+.seg.lay button svg{width:30px;height:30px}
+
+/* switch (brand toggle) */
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;user-select:none}
+.switch input{appearance:none;-webkit-appearance:none;width:42px;height:24px;border-radius:999px;background:var(--g2);position:relative;cursor:pointer;transition:background .15s;margin:0;flex:none}
+.switch input::after{content:"";position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:right .15s}
+.switch input:checked{background:var(--cta)}
+.switch input:checked::after{right:21px}
+
+/* alerts (brand: rounded, icon) */
+.alert{display:flex;gap:10px;align-items:flex-start;border-radius:var(--r-m);padding:10px 14px;font-size:14px;border:1px solid}
+.alert svg{margin-top:1px}
+.alert.ok{background:#F2F7E4;border-color:var(--olive);color:#4A5A1C}
+.alert.err{background:#FDEEEE;border-color:#E6A39B;color:#A3281B}
+.alert.warn{background:#FFF8DC;border-color:var(--sun);color:#6B5200}
+.alert.info{background:#EEF9FF;border-color:var(--sky);color:var(--navy)}
+.alert ul{margin:4px 0 0;padding-inline-start:18px}
+.alert b{font-weight:600}
+#alerts{display:flex;flex-direction:column;gap:8px}
+#alerts:empty{display:none}
+
+/* student table */
+.counts{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:var(--g1);padding:3px 10px;font-size:13px;color:var(--g4)}
+.chip.f{background:var(--pink)} .chip.m{background:var(--sky)}
+.slist{list-style:none;margin:0;padding:0;border:1px solid var(--g2);border-radius:var(--r-m);max-height:460px;overflow:auto}
+.slist li{display:grid;grid-template-columns:1fr 70px 78px 36px;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--g1)}
+.slist li:last-child{border-bottom:0}
+.slist input,.slist select{min-height:36px;padding:5px 8px;font-size:14px}
+.slist .hd{font-size:12px;color:var(--g3);background:var(--g1);position:sticky;top:0;z-index:1;padding:6px 8px}
+.empty{text-align:center;padding:26px 14px;color:var(--g3)}
+.empty > svg{width:44px;height:44px;color:var(--lav);margin-bottom:6px}
+details.box{border:1px solid var(--g2);border-radius:var(--r-m);padding:0 14px;margin-top:12px}
+details.box summary{cursor:pointer;padding:12px 0;font-weight:500;color:var(--navy);display:flex;align-items:center;gap:8px;list-style:none}
+details.box summary::-webkit-details-marker{display:none}
+details.box summary::after{content:"";margin-inline-start:auto;width:8px;height:8px;border-left:2px solid var(--g3);border-bottom:2px solid var(--g3);transform:rotate(-45deg);transition:transform .15s}
+details.box[open] summary::after{transform:rotate(135deg)}
+details.box > div{padding:0 0 14px}
+
+/* constraints list */
+.clist{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px}
+.clist li{display:flex;align-items:center;gap:8px;background:var(--g1);border-radius:var(--r-m);padding:6px 6px 6px 10px;padding-inline-start:12px;font-size:14px}
+.clist li .t{flex:1}
+.tag{font-size:12px;border-radius:999px;padding:2px 9px;font-weight:500;white-space:nowrap}
+.tag.apart{background:#FDEEEE;color:#A3281B} .tag.near{background:#F2F7E4;color:#4A5A1C} .tag.front{background:var(--sky);color:var(--navy)} .tag.door{background:#FFF1C2;color:#6B5200} .tag.teacher{background:var(--pink);color:#7A2357} .tag.lock{background:#EFE5FF;color:var(--cta)}
+
+/* main area */
+.main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.toolbar{display:flex;flex-direction:column;gap:14px}
+.toolbar .lbl{font-size:14px;font-weight:500;color:var(--g4);margin-bottom:6px}
+.chart-card{padding:18px 18px 22px}
+.chart-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.chart-head input.cls{max-width:220px;font-weight:600;color:var(--navy);font-size:17px}
+.chart-head .date{color:var(--g3);font-size:14px}
+.chart-scroll{overflow:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r-m);background:#FBFAFF;border:1px dashed var(--g2);padding:14px}
+.chart{position:relative;margin:0 auto}
+.board{position:absolute;height:22px;border-radius:var(--r-s);background:var(--navy);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;letter-spacing:.5px}
+.tdesk{position:absolute;border-radius:var(--r-m);background:#fff;border:2px solid var(--navy);color:var(--navy);display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:500}
+.door{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8A6A00;font-size:12px;font-weight:500;gap:2px}
+.door .dbar{width:10px;border-radius:3px;background:var(--sun);border:1px solid #D6B23F}
+.deskbg{position:absolute;border-radius:var(--r-m);background:#EDE7FA;}
+.seat{position:absolute;border-radius:var(--r-m);background:#fff;border:1.5px solid var(--g2);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2px 4px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:box-shadow .15s,transform .15s;overflow:hidden}
+.seat .nm{font-weight:500;color:var(--g5);line-height:1.12;word-break:normal;overflow-wrap:normal}
+.seat .meta{font-size:.72em;color:var(--g3);display:flex;gap:4px;align-items:center;margin-top:2px}
+.seat.f{background:#FCEFFF;border-color:#E3B4F0}
+.seat.m{background:#EAF7FF;border-color:#9FD6F2}
+.seat.empty{background:transparent;border-style:dashed;cursor:default}
+.seat.empty .nm{color:var(--g2);font-weight:400}
+.seat.locked{border-color:var(--cta);border-width:2px;padding-left:16px}
+.seat .lk{position:absolute;top:2px;left:3px;width:22px;height:22px;border:0;background:transparent;color:var(--g3);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.seat .lk svg{width:14px;height:14px}
+.seat.locked .lk{color:var(--cta)}
+.seat .bad{position:absolute;top:2px;right:3px;color:#C0392B}
+.seat .bad svg{width:14px;height:14px}
+.seat.violate{box-shadow:0 0 0 3px rgba(192,57,43,.35)}
+.seat.sel{box-shadow:0 0 0 4px rgba(98,0,255,.45);transform:scale(1.04)}
+.seat.over{box-shadow:0 0 0 4px var(--teal)}
+.seat.dragging{opacity:.35}
+.drag-ghost{position:fixed;z-index:50;pointer-events:none;border-radius:var(--r-m);background:#fff;border:2px solid var(--cta);box-shadow:0 8px 20px rgba(98,0,255,.25);display:flex;align-items:center;justify-content:center;font-weight:500;padding:4px 10px;transform:translate(-50%,-60%)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--g3);align-items:center}
+.legend .sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:middle;margin-inline-end:4px;border:1px solid var(--g2)}
+.notes-out{margin-top:14px;border-inline-start:4px solid var(--lav);background:#F7F4FD;border-radius:var(--r-s);padding:10px 14px;white-space:pre-wrap;font-size:14px}
+.notes-out:empty{display:none}
+.notes-out::before{content:"הערות לסידור: ";font-weight:600;color:var(--navy)}
+.unseated{margin-top:10px}
+.tray{margin:0 0 14px;border:2px dashed var(--lav);border-radius:var(--r-m);background:#FBF8FF;padding:10px 12px 12px;transition:background .15s,border-color .15s}
+.tray[hidden]{display:none}
+.tray.over{background:#EFE5FF;border-color:var(--cta);border-style:solid}
+.tray-head{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap}
+.tray-head h3{font-size:16px;color:var(--magenta);display:flex;align-items:center;gap:6px;font-weight:600}
+.tray-head h3 .i{width:18px;height:18px}
+.tray-head .cnt{background:var(--magenta);color:#fff;border-radius:999px;padding:0 9px;font-size:13px;font-weight:600;line-height:22px;min-width:24px;text-align:center}
+.tray-head .sub{font-size:13px;color:var(--g3);flex:1;min-width:180px}
+.tray-chips{display:flex;flex-wrap:wrap;gap:6px;max-height:204px;overflow:auto;margin-top:10px;padding:2px}
+.schip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:#fff;border:1.5px solid var(--g2);padding:4px 13px;font:inherit;font-size:14px;font-weight:500;color:var(--g5);cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation;min-height:34px;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:box-shadow .15s,border-color .15s}
+.schip.f{background:#FCEFFF;border-color:#E3B4F0}
+.schip.m{background:#EAF7FF;border-color:#9FD6F2}
+.schip .lv{font-size:11px;color:var(--g3);font-weight:400}
+.schip:hover{border-color:var(--cta)}
+.schip.sel{box-shadow:0 0 0 3px rgba(98,0,255,.45);border-color:var(--cta)}
+.schip.dragging{opacity:.35}
+.tray-note{font-size:13px;color:#8A5A00;margin-top:8px}
+.picking .seat:not(.locked){cursor:pointer}
+.picking .seat.empty{border-color:var(--cta);background:rgba(98,0,255,.04)}
+.picking .seat.empty .nm{color:var(--cta)}
+.drag-ghost.nodrop{border-color:#C0392B}
+@media (max-width:600px){ .tray{padding:8px 10px 10px} .tray-chips{max-height:150px} .schip{font-size:13px;padding:4px 11px} }
+
+.versions{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px}
+.versions li{display:flex;align-items:center;gap:6px;background:var(--g1);border-radius:var(--r-m);padding:6px 10px}
+.versions li .t{flex:1;min-width:0}
+.versions li .t b{display:block;font-weight:500;color:var(--g5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.versions li .t span{font-size:12px;color:var(--g3)}
+.credit{text-align:center;font-size:12px;color:var(--g3);padding:6px 0 22px}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--g5);color:#fff;padding:10px 20px;border-radius:999px;font-size:14px;opacity:0;transition:.2s;z-index:60;pointer-events:none;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hint{font-size:13px;color:var(--g3);display:flex;gap:6px;align-items:center;margin-top:8px}
+.hint svg{width:16px;height:16px}
+.print-only{display:none}
+.busy{pointer-events:none;opacity:.7}
+
+/* large screens / projector */
+@media (min-width:1700px){ body{font-size:17px} .app-header h1{font-size:32px} }
+
+/* tablet & phone */
+@media (max-width:1100px){
+  .wrap{grid-template-columns:1fr;padding:14px}
+  .side{position:static;max-height:none;overflow:visible}
+  .main{order:-1}
+}
+@media (max-width:600px){
+  .app-header .in{padding:8px 14px;gap:10px}
+  .app-header img{height:38px}
+  .app-header h1{font-size:22px}
+  .app-header .sub{display:none}
+  .privacy{margin-inline-start:0;width:100%;justify-content:center;font-size:13px}
+  .wrap{padding:10px;gap:12px}
+  .card{padding:14px}
+  .panel{padding:14px}
+  .chart-card{padding:12px}
+  .chart-scroll{padding:8px}
+  .grid3{grid-template-columns:1fr 1fr}
+  .grid3 .nm-in{grid-column:1 / -1}
+  .slist li{grid-template-columns:1fr 60px 66px 32px;gap:4px;padding:5px 6px}
+  .tab{font-size:13px;padding:12px 2px 9px}
+  .btn{padding:8px 14px}
+  .toolbar .row .btn{flex:1 1 auto}
+  .seg button{padding:7px 9px;font-size:14px}
+  #modeSeg{display:grid;grid-template-columns:1fr 1fr;border-radius:22px}
+}
+
+/* print */
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  body{background:#fff;font-size:12pt}
+  .app-header,.side,.toolbar,#alerts,.hint,.credit,.lk,.no-print,.toast{display:none!important}
+  .wrap{display:block;padding:0;max-width:none}
+  .card{box-shadow:none;padding:0}
+  .chart-scroll{border:0;background:#fff;padding:0;overflow:visible}
+  .print-only{display:block}
+  .chart-head input.cls{border:0;padding:0;font-size:20pt;max-width:none;box-shadow:none}
+  .seat{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .board,.door .dbar,.deskbg,.seat.f,.seat.m,.notes-out{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .seat.violate,.seat.sel{box-shadow:none}
+  .seat .bad{display:none}
+  .print-title{font-size:13pt;color:var(--g3);margin-bottom:6px}
+  .chart-head input.cls:placeholder-shown{display:none}
+  .chart{margin:0 auto}
+}
+
+dialog#dlg{border:0;max-width:440px;width:calc(100% - 32px);padding:22px}
+dialog#dlg::backdrop{background:rgba(32,75,103,.45)}
+dialog#dlg .btn.danger-ok{background:#C0392B;border-color:#C0392B}
+.seg button.sm{min-height:34px;padding:5px 12px;font-size:14px}
+
+.touch-ui .seat .lk{pointer-events:none}
+.touch-ui .seat:not(.locked) .lk{display:none}
+@media (pointer:coarse){ .seat .lk{pointer-events:none} .seat:not(.locked) .lk{display:none} }
+.selbar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:40;width:min(640px,calc(100% - 24px));box-shadow:0 6px 20px rgba(32,75,103,.25);border:1px solid var(--lav);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#EFE5FF;border-radius:var(--r-m);padding:8px 12px;font-size:14px;color:var(--g5)}
+.selbar[hidden]{display:none}
+.selbar .t{flex:1;min-width:160px}
+
+.present .side{display:none}
+.present .wrap{grid-template-columns:1fr}
+.seat .nm{padding:0 6px}
+@media (hover:hover) and (pointer:fine){ .seat:not(.locked) .lk{opacity:0;transition:opacity .15s} .seat:hover .lk,.seat:focus-visible .lk,.seat .lk:focus-visible{opacity:1} }
+
+.scroll-hint{font-size:13px;color:var(--g3);margin:6px 0 0;text-align:center}
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 13.6c2.8.2 5 2.2 5 5"/></symbol><symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h3M14 9h3M7 14h3M14 14h3"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol><symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol><symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V5M7 10l5-5 5 5M4 20h16"/></symbol><symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M3 7h3.5c2 0 3.3 1 4.5 2.8l2 3.4c1.2 1.8 2.5 2.8 4.5 2.8H21M18 13l3 3-3 3M3 17h3.5c1 0 1.8-.3 2.5-.8M13.5 7.8c.7-.5 1.5-.8 2.5-.8h5M18 4l3 3-3 3"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-unlock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-clip" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.01"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 10"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></symbol><symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></symbol><symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V6a1.5 1.5 0 0 1 3 0v5M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v7c0 4-2.5 7-6 7-2.5 0-4-1.3-5.3-3.3L4 13.5a1.5 1.5 0 0 1 2.5-1.6L8 14"/></symbol><symbol id="i-door" viewBox="0 0 24 24"><path d="M5 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="14" cy="12" r=".8"/></symbol><symbol id="i-desk" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v7M19 13v7"/></symbol><symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol><symbol id="i-empty" viewBox="0 0 24 24"><rect x="4" y="6" width="7" height="5" rx="1.5"/><rect x="13" y="6" width="7" height="5" rx="1.5"/><rect x="4" y="14" width="7" height="5" rx="1.5"/><rect x="13" y="14" width="7" height="5" rx="1.5"/></symbol><symbol id="i-lay-pairs" viewBox="0 0 24 24"><rect x="2" y="5" width="9" height="4" rx="1"/><rect x="13" y="5" width="9" height="4" rx="1"/><rect x="2" y="14" width="9" height="4" rx="1"/><rect x="13" y="14" width="9" height="4" rx="1"/></symbol><symbol id="i-lay-u" viewBox="0 0 24 24"><path d="M4 4v15h16V4"/><path d="M4 9h0M4 14h0M9 19h0M15 19h0M20 9h0M20 14h0" stroke-width="3.5"/></symbol><symbol id="i-lay-groups" viewBox="0 0 24 24"><rect x="2" y="4" width="8" height="7" rx="1.5"/><rect x="14" y="4" width="8" height="7" rx="1.5"/><rect x="2" y="14" width="8" height="7" rx="1.5"/><rect x="14" y="14" width="8" height="7" rx="1.5"/></symbol><symbol id="i-lay-rows" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-width="3"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol></svg>
+<header class="app-header">
+ <div class="in">
+  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASQAAACVCAYAAADxGIeIAABuPUlEQVR42u19d5xcVdn/93nOuXfK7qYnEJo0QRPFAmLFTZBORFFnrK+IhShSBX6CqHeviuIrRbpBQbDiDKIgTUGTtSAqiC15FZEqLSGk7O6Ue895nt8fd2azCZteCDDfj+OGmbl37j33nO95+gN00EEHHXTQQQcddNBBBx100EEHHXTQQQcddNBBBx100EEHHXTQQQcddNBBBx100EEHHXTQQQcddNBBBx08z6DUGYMOOujgWUWpUjEj/63aIaYOOuhgy4JGEhEAHDPnhuJIYoqiiF+wg9OZHx10sCW0MqVStcrVctm33/rEt/sPJ8MngM1uIv4qY+nKS973psfaxDRtfknjmKRDSB100MEmQRRFvGD6dGoTUSmqhBN2mfoeZvqEDYLXkWGI9zA2gEsaT0DxXZek35zz4Rn/BoBIlRdUqzSSyDqE1EEHHaw3EU1fMJ3K1YxIPnHpb8ajhz4gKrPDfHE6VJE068IKVQIRIGystbkc0mZzKRN+6NLkm984asY9oxFbh5A66KCDtWtmUcTVEUR05ad+uOOf9t7xg6r00TDI7ywqcM2GVygREWeLUFtanSoAYWNMmC8ibdZTFVQhctmlR+3322HVr1zlarUsQOvADiF10EEHI1EpVUxpWkmpZfP54f9cvQflgqPFy4cX7TRuyr17TkLqnGfxBGZ+5kIcwS0ZMwkRmbDYBddoQICbudGYc8lH33LDSr9ZLQmBnjfE1CGkDjrYiPVTKVV4/rT5GsexAMB3jr7iFTkExwj4f3JBrqfmmkAzSZdO6vL37rVt0ChYY1IPJcIaSalFTRAVMJmg2IWu3z0A/veTf0BIl9ieQjW++ugGAJQqaqbN7xu+hg4hddDBC0ktg1K1VOW2WgYA13z4qjcTmeNU9G25IB8OpU049R4EFhBxKqh1he6+vbaVgQmF0CR+tatvZWkJ0JC160//TfL/t8gE3d0WIvA+nQ/VS7leuyb+xSlPP1+IqUNIHXSwgUSkqjTn0AtndY8rHpfrKhwUmBBDSR0e6hVgEJFXAKrwTCCnSJnSh/faBk9N7QmMkzUsTAVUoaHV3N+faBbveTxA3hoS8QBRaEM2YNRDf+9j75l+pbB+7ztvfcOjAFCpVMz852jIQIeQOuhgLYgQ8fTSCkN15XXnFpZNKhwJxUlBaF8zZmI3mj5VryIKZgVICRAAKgqhTOZxrQWnzstje06WJ3cdb1hAEH3mSlQFQkbw4BJX/O3DhIANFGBqnQMQk4omO47xi9/18tAlyZOq+PaYxfXLL/5g7wMAUCpVzLRpzy1i6hBSBx2sjoiiiDEPHPfHDgDmzDpnUshj3uXUHxua8OWAwvaY1ATMXtQoKCMhytxfMoKMvGbviyoUBHYii3cYkzw6fUpOmYm8B9p2JVFoaGEXDkjxV/cRgYiYhn1qTNn/2brDsldvq0+/aQcxwibHAabMX/x0mFIlSdNvfOnzh/y1LcmVnyOeuQ4hddDBKmtCo4j6RhDRRUdctF2Bcv8D0Y/nbLizU4ckTXy+O0xyXbmciGSCzipkpJS9JwoIAara+jdlRu1mqkOTutxje23LSVdgOG3xRWBBy2qucNt/1CQugCEQABqxXNkQuOHckpk7JwMvn1zUxMmkJ5LmxEVpwXZ1oVmvJSryY3Fy2RejQ3/TPq5UqZhquSTYSj1zHULqoIO2lhRFTCMMwpcefumuhs3HGPhQ3obbJj6Fk9QTiExAvjCuwKRkfEvskDYZtaQgaWlefgQZDZMUsu9QKmh2h8nje02h+oSugFVADZfmbrvPm+XNvAYMVs0IibASLRFBn37rHkljalcuN5j6HR5oAKosKkLEJpcrotmoQ0RuJ68XwB98c1t9q1QqplQqCdHWRUwdQurghU1CAFVLJZ5fnaYxMjK6/JALXufYftiweXfe5sc0fRMizhMREcAgSNe4gufABF4kI5/WSvKjkBFUWypbS32DZkYgAJ4I7BWO4Z7YayrVphQ596v/ePvEgEXOgkQBIjBGkBIRyCukYP3id73UpHmD7R5tNscsdaE3IJUsXkAVQgCHuSJ5l8Kn6Z0KvQhJ8tM4PqKWqaVzbV/fDL+1EFOHkDp4gRLRM133f3j9V968tFj8/LJ87i2DNkTqE3jxngjMGRkBCoQ9QZIrhoGIkrSc9Jl9qCUJUWanlpbUJKKt7xCkRUYOBD9s7FZnnKc8wS02Jlm6cKDbBEysukIiIgJB0QrthvGKdOqYgacO362rUPOyw3+bBILRzGgEzX4GqgpV9VDlMFcgFcD79O8MuWhoaXLt2WfPWtImJmCePNshAx1C6uAFR0QoVZlaRPSPaVGYdncfSConpIE5yBfyWGhEFhrWhImppShxy7VlAk66xhdYFTZTvVpkhJU9am0jtopCQPCM7C8UKuqMEhvxSY8XKnhPeVHNpd4urrnlj+VscSGBE4K1oBUhlETDUpJpOtRfMRXL37S97vBwwxVrEnhWUBYt0LrZEcQkCkC9QCmweTZskCbN+0H6Tak3r4rjWU9sDcTUIaQOXjBENK+3z8xsGapv2Dsqju0Ze2QucSeOkeA1ALCU3aBaLjQM08KcpSXGDJMBZ/+Q7gkFIcO2LQGN5lETJQgpBJmrXwFnvBojUu9KfZj34vNeTKhqjCoYRMqEZYlP6yJpk0wxJXJPMvwSqAXBmPZSJQIxwdQSv2zmzt7sNpl3fLjOYogzAmoxEDIyygSy7D1t/VtUBApYG3Jgcmg2h54kwpWJc1ec9bnD/pMRkzIAbOmQgQ4hdfC8RoSIZ/SC20R0574XjEny+gFlmp0T2aurKUjVK6CuHrAXa/IQ1eU5g8fDAElLVSMA+Z4gyRXCwGeCyLARW4fVM0KaaWfOeG/YSy2f+kLeSVpwEljVlseeSFpSFQggIiTepwOJWGamgexNAMAAabqQgBqptWAaVt9U/dAhL25sE+bDwqALPGGEdNQmpnbS7ujEBFURVTVsTS4soFEfWi7Qawj+kvjMw/7W5ohSqbLFQgY6hNTB85OIVin/Mbf3f7clCo5ixccKNrdb4hLk680mKQUgsALayBvyALilij2ZD+SpwDIUsDlOusfmrYAyFz8BygQnIhAVqFKQ+kaQ+GLopBGkPh+AlKBMYIBXVM5WrAg5QhboKMsTSUWRU5V00BjxxDmFwoDgVWUxq3+KQEpkrVe4YqD2oD3dNnU1XpWxQjAalpJ0Bfu0iGkFIbXM3tn7IqpKwswmn+tCvT6QqspPyMklcTzr1+0xrZQqpryZialDSB08v1SzKOK+GGh7zG5701d2tSZ3LBG9v2By26aSIpE07WmIt4q8AGpA5EgHGwHnwWQVmbTRsISH8yGahnXMhKJDYAIvKgpR8iqcehc2fWBSnwZO8iSqhjICElqh5yky19ywqDVi5RERms6ltUQMM7GKNAetdY5tl2Ym8NZXCTWIf4rha14DTO4ZnPKm3cOcR86pgloSUSYM0bD9qK3G6UhCatuXgBHvKzSrMuAhitDmbJo0PZhvTQ0u+Mopb/kViDwARL2Rjfv7/OaIZeoQUgfPB1ClVOFStdzWovDLmee+AorjCFTuNvkxdZ8gbbnuu1JJc05CpczowwASgmtaMkSZ5ViJYAAsDIw8PbnLFUIDbnjhxBlOvATOh1BVhmGiTH3DMOG0PWMYNknTaghJobK84RxAYYtKMGQsGrwi3qjtrWMQlFSXpd6nL55SL+48STTxRKwtrmGg2SR2qkqUEQ0A9WqonnSvkGsyMiInQJpFiOvImkzOD5EiVSYLom4oXK6e/kFq9UsG7ZPXxdU4aRNTX3+f35TlTzqE1MFznohGuu5/ud/5b/ZGjifQ27ttwTZ8E947DwKDmAqp911Ozcj+HgQgIULCq7yZkUIykDOuRlTIdCNiXYV82t6vEXbnYV2MRuhmRKuoakRoJD6tOW+Zho9CnSmtGWNbZqFhWxUAKDMKKul4IlmWiizx3gJkiGjYuUaqK8qb0Ii7GfHbmRTYch0OW+7bn7f+wQRVUTBTGIRoDjWxKLD3KMnlkGXf/9oNnx5oq3Lzq/OH47g6hNTBC0stA2hebzTsMVOAfrH/BbOM6icZODhnQtRdE6LimYip1V4oEE3GpJ4UFKxYAARVdQlR3RvuGZYUWq8uIGEVergQsBpjtBU1vTLxjEjqoBHvAyBePSGpQgaazmfXo8MLsklYNmRtDwD2GNG1LQuQ9JOhsGCjUK17TRd7MSkZw1lQQybxrExIKxPP8Hs8glhXktqyPxmFqTJgaq7ZTCRZ1t01xrJB6pr/BuHbnvwV5/7k2IVAO5l3/kaVP+kQUgfPWczZe06w6/h6iZU+zmT2syA0XBNQ9cjKw1J742dRHZN4NQCPpl8kSk6YrEKHFzSrugKUDIGXGUoW5WxosCKkeZh3iNeBkDKJaASHoZ6KqztveGSoEYCUyC23xrYDLnVYalE/UcXnmULfWvIGgIOmiz1oSGHbZ3omIWEUQqLVENIIxmUCvHd2eUJLcgaD1hABam1gQhuimdYeB/CdwJs5Z/3smAc6ElIHLyDJSIlAesvB50013rxbBe/PGbsPAaj7ppKoEMjQKlOcVX1P4iRUBPqMBUAQVddU2OGowxYJhExJAA2zCG31jxUCbRpj2+70dSGkVdU2bn3uVd3yxIPRIsEREAKWWYuR0pESywT4pADKaaaVDV8DISsQsFw0XaqwSmBsCkJigkLVDCWOnOrCfABnOMzCCkhAqoGxxtoQzbT+tIKvU2O/9TD33LWhYQLcmeYdPFfQh75syXi8mohPHx927+PEY8g1UigpiMyqW6wSUHTeB6JWV78j11jJcSv/gwQwqs6qGrTy0pjZTEqdqqg8Yx9XXdN/joqmFw/VFWTU8nSRAuQlgUht2EtHjG4VHUlGwzyirahwgMYS2SkMsYCXEZrahosrBEok4VSDlClwgG2HERCBCcTOu7SR1CUfFifkw8JHfajvKRaHgiiKNkjY6UhIHTwnUXnduYWeov1wADoxZ8MXO3Fo+kSggGlttEqEQupdjx9BRquwBQHwAkkV1E5XE6iGhlLLFGZu94wBjKosCo1fGtigrfet1Y60ioRkiOBU3EDiQCC7KmMQAFJJlwSBT6zJK4CCajKBYDPNc+WFOyLMCMiivpFCkqdBVAMHNJrtaB0lJBXxppbCgEzN0ODi0HZTa0AU8MxsQ5tH09UTIv2uCJ137g2fWNBR2Tp4YaluI8qEVHqj7nFm4oeI8LEc2728eiQuEQIjFEnHJp5BK4zYo0C8Vy/SMixnKpsLLIiJTZaJ1tZgCF7VPZoPKGU2BB1hpF43OxIToZb4ZqKS43YJklVIiQEMWIsBa5AjNCepEIFCabHFSDu1rEK00jpeVXU5KF3GZBXEoxLTWgiJ62lCPlNZl1hKh6y1pCpgNrkgj2ZaTwD6nmf39fOvP/7vI9XqDiF18AKzJ63saatMi8LxU8e/l8EnhWxfqS5FsdFsGiAc4dt6hv1IVZ1z0iBBt2TxR2ospdZQuOJ7OiwNGQDLmZMncjY0K4k1ayckQiYd1RLHTKMb19uENMimPhia/DaqYoiMjGAKWpWMWoQ0IsyoFYwJqUN1CZEmzFnI+ToQEoiAxCXc8JaYWEWTRSGrs0EuZ3NopPUEhO97Z84//5bZfwc2jYetQ0gdPA+IaeWk2cq0KBwzddwHJjbl5LGwL/OqqPtEWm53Ho2UXOJaAkYmHdk8E4HMaIQEAKSQJ3LWD1oTmGGDzsqElH1/hIetFehYT13iVMNV2XVlQiI0GMs4F4YFQkGHTUy6djIaQUgAwCpwkHQJW6ox25UkpdEIiQD16oNaqqpqFCSOoE/nc9ZDmiD8gJ05/6ubmIg6hNTB81pievh1JxeW0vbvJdCJORPs5VTQ8Im0bD3tskIQ1cTXnQURg6CcMylbDlfWcFYmJKNAk8n9NxdwFnC5FjsSspKzzmlSS51p1VtbyZpFAJS05eJTCUANZyj1oB5j2RHIM1MR2moJ0C7PlCXuP4PcskgiWYm1BpiTZcwBOKsMMHyHvDIhmVrapNQbYmNDE2KJpnjS8rUhpZ/52k0n/XtzEFGHkDp43hJTdUT09twXRflJU8e8n5hOCNnu5VRQ94kQEZiIxflB3/AFIhglcrbLEoGMYvWERABYVRcH1i0ObWDaGWerEBKgSiABkRKB6qnzXhEaYnDrNWxFUoVXgRcPcj4JLbMo/EDqVYiYGQqm0DIPMVOO2QBACqYistpw1Pb1y3B6/7BdSQkgVkgdokutldRwMGzpaRGSMmBSqQf1tJAPiqi5+iCpXvB4wO+ug/u+futx3y+VKuG0afPd5qqXZDtTuIPnEwhQVMt+RCG2Bh7CFXe87twf9MC9n4ATxtj8y1MVNCQVeC0ywKpQzhsBUbgubnslpvHO8ZBllzK3vGUEKHyrDBwHbClncsYQYSBtQMGGIHAiTxPJUlVdAgJzxiEWinFwPjTEY5ltMUfGBkbQUEIqHqmkcN51ARBCCiIKmBkgNJiZlU0ohDoIRaiAsggBZiJSVXgo55UwOXWyVG0yZDjgzGemCggLTI83hSb5gbqvX5lqeumpvzz13pMPufBw03BjAWDhwslSrW6+4m0dCamD573EhFJluELkHa87tzCG8QECTrBsX1av1aFNL2I5RVdgTbsM7FokpLbqNmAofSIXcKuspCmYHJgMnDokWSmjuwi4r+7ln3XRe626R5zlge4G1R8ucP3FAAZ7pioeecTkc9qVJsqaR8Fau6063oONTKt5fXEi8jIi2jM7P6PpE3h1CoUQkcl8daoESokoBFOdiARMXWAMqSIPBSsUjKyn0gBTY5k1hq0N8jYHGRpaYprJ9+reX3hK/yn3AUB88EUfX96T+3qyTc99S6d0fey70RG/RxQxNpOE1CGkDl6QxPTzvU7pmtq93ZF+qHlMUYL9GkWCsySkOmz8XhshkWYNRZ7KhzbJFdD0TQD0R1Xfzya4VUkWzLr5uCc2xfV/d98LxviwubOxdqZCehm0X97kJjEIDZ9AVDwRMYNIocNpKi1yTZjICmkKIqdERYUOESjPQd4+aeXplOgHwfLm10+ce+J/gCxhNlz25OmPdAWf+r9dxh9XH5PfR0SOYfKv+Hb8rgeiKKLNobZ1VLYOXmCq3DAxDQH43j+mRZU66TvU5E/qMuFrAUXNJdIioNEzGVq5ckWbM6SKsalb8IipXwe4n01d3H3PPncfl7a/GkURv/z3PXs4MS8CdEeAdgJoElTGsdNtWDQAMA5MTxAghs3jgC4G8QMKeRTKj4yTMfNn9h+9HMDfWq8LKvufu33q0gM95D0ADugJiqbhm3DiPfGKPL4sGyYrbcKKHEQCy4YCDrqb4paiWf/RWKGvfejWFURUmlZSislfO+vSj47N0zGXnvfuHwP44VGf/8nBXqkXwP0Lpk/fLFkeHULq4IVuY0oAXHPX3nN+3OTau6BycpfNvUahqPtkJRVCW1GS3bZgmpKgJs1+Vpoz1phbXvmLE5e2v3fzIRfsJmreAMKbk9/71yaiO1kyY4s2D6ce3jkYyazMZLITE/HLBR6BCYYN3omkaPq0vtQsfeIn+5+/gEFz65r+adnyMb8v/2r2owCuAnDVd9547itq1DiKiD7QE3ZNHiam4VSaLCwgIEY+yHE9bS50Pv2OSdw33/HbU+9tE9H86nwtV8s+iiIGgCcKwROLrX0NgB9HpYu3dQ8vn1LryT0IAKh2bEgddLBZVLkqKlxGpsrdtfecIMgPlojwKYD2FvVoBfpI0YYGBDQlvVWFznv5b0+5vd3PbMF+5039r+VD6gG/y7J5bdHmJzr1WJ40syLb6hWKBnsBebGZ3Uc1s/0QgdQrkTCRHdYRFcxEbNnAkEHABsvSwbQp9E8iugXg698798Q72vdy9QFf36ko/HGAPpo3weSar0NVhYiIicGghQL5ViORS/7nN596fJiIVnHfR1HEcRxLfNT33mjE36Sqdyr0peplwed/2DMLKAkNR0RtTYSkSlFf3xrP0dfX16qEsH7h5KpKfWs597ogjvt01d+OEDGi9T9XX9yn6xsW395tNhYb8tsrLzylvqhvk21AcRzrqhNyTb+xuuvXjZiDtAkXxKrhAnftfUwQ5Pb8i2V+iVPHPbaAIdf4m5D74it+e/q17eP+sd+5+xrQUazy9jQIt3u0EMKLh1dxiYpLRUMCCbz35GEYammlOnDUtk8lQgiGo5daMYstQ3VWX5ZICbCZgz9E3TdEFb8jxZUGwbXl/uMGAeCHvefvHFg+HaCPBGxswyfOkrGiOKz0qxNuAYC5vZGd1w9ZXVG1dgpI/P4r/9SV695HFRhMlv1P/P2Pfa9VW9s/pyWkKFJeML1K0+avPZiqzdCbbLKp0qbszFkqVQwAbKlODBs7LhubX7SpzrvJn2sWXrPJialt/P7LG8+5Y0LQ/frlbmg5VL/SaAxcuM/dcQ0A5r/pa69l8MlMdGSOg7AhKci75PF84JeFQY6815oIQKTkvJKoNeDh4RpOJiEFKbwQhMCBYkS1xxHENOL61ADSVEkdOF8wORCAhmveC9Dlg0nz8o/ekVVy/OGMr7/FMM4u2vw+Td8AgH0nuCX3AEA7gHRNz+mLH7h8Fy/mbmIak6McNdP6ldE1H/3Y5iSkjbIhfeL7vxmPRmM8KXvk86t82kCQMkmXGWouKS6NZ9Owoa9UqZhqefU3FMexnHHW9dtwmC+ikUo+X1jva3NeFNq0aCx6jIgardgwBYCTS5dtz400RMAC5NfhbA04byjp0mWX/eDYJdURD2Nti+zMt12yowUbZ/yGLxojbJ0diuOsMt/67zqkXzvwa1OQH9uFIFnHex4dgfFar3nbGHzyMeqnBrDCmVM55IrJCIa6E8/S/gXhQFP1tpbWl34sPuXpkeeas/cxQWFCTzgu1736sXn8mW9N2nWMDiwVpttoaHPamP6i52wz4Op3OZ8c88rfn3EPAPxj/69NM45PJ9AHukyOBl0Dg74BJkJgTDgxcVqzBkNAQqqGnIAVQRZYrSOkIs3ICK0KIopQIZl3rF0Lm2g4m59WZHmQACYgVigaddcMCIrQhHsEbM4xTEf9aOb5X3n33JN/+N55J/2y8rpz31zvapwZkjkzUdc1sz92GkWM/tWPwfQF01tVD+zuYZAbnyaNFAECBU0HgPnT5m9FXUdUCUR6zA13FYMlg7/iINjDu9StKMQ7kstBANWIaUBF/0vW3mSc/OTCo/Z7uH2e0dQbyr3hTBvmPp4kzRCktCFinCqU2TABDxNp+fOfPvC+KOqjOI7l1Hdc+kdDdjcnPqu1vA77JmUBtctBvAwq/4DSj5c/fM+Nl999eVoqlUy1WvUjJahqteyjIy8+hDj8jpOUCBt0G8PlREOTT1zS+OwXbvjkt6NIeV0a+LXJ8mtHzHmtMfixF18AQbBhQ9qaMapZLB8e8aylT1/3ifsA6I8PuXyH1KS/tsxjvWSiQTbBMvk0Z8KhxDVOKd903LV3HTMn2Ofy2ektB3/5410mf8qQa6Sqrc1RZGQB6RHy14r3SUmMMivwEDwfddAdn35sU0uB9x5yQa4xmB61fJH/4Zv+9emByutOLrykvs0HbcGeAdIdnOogSD1lSWxtSQ0GiqcD6x9mLljv8wwizWroKrUeZrsnd5YuAhEhT0CwIiONhhU3pRVpIliZmKBQnyipArbVmUlCDi0T4MX/pCmN09479/9l3rOZ5x9hhO5/Z/9J/1jbWLUloL73f+u0QtD1v41GLTXGBN6nCwWNV8XXHP/YppZ2N1pC8o0kH5DuaowdryIrJRKuNH+JJxAziPmlxOZAR43PfvLbc8+6hOjrrZtqdWJRIiL58pdvm9hkOZmIxzPzas+7LhARFLvHTqgNLnsHQF8F5hogFigmmSCY0CqCs64LEUQ8gYlBzK+A6vvH7rz3nafsdMkJ51Y/+aeRpFRqOSEUOjU0wWSRdkXVDVU5BdZYpAbHH3PMnO/FMdxIiW9tO52y7FUMurcfTAbBZDZKUScAXj3G5MdNWNZYcgyA0wCgGSRjrfIuTAwwr/QToh4Fm5+YuOaHAVx7/28fa1kVdUrehLs3fALTHh8a2UdsREr8Sv3Fsmc7Ieh+8dON5W8CUJnX22fQD7epFsYet57YBHA5ADwwMXoJ7gsu9IE/MKFkSIiWkyWjhq1YAIYglgBDaBgIGbHdImGdSAERAnHAAYdZukdGKq3A7qZ4w8wBjfJQBIJUHDSbQC2ZKhuSljvfBNA0JXKttcyJz0IWuoL8kYD2Vmac/5nyvJPnlOeefMNIiXlN9z7sQFN+PUSgpCzeSWhzUxpCuwN4rD23thpCClOvADW8cypeJMuEGZWRMlEpY3I1xkzKjxl3/rFXzd09/tDM4yJVjkdISgNas4HmEucS8eJBG7F8FPDONTkrUz7ifULqxamob5ePWVeG0/auD4LmbOF1ieK2U99x2eHnVD/xu1V3DWJNnTgVFQFkIxgJ4lxKAJB7uMGtVbvO4yLQxHknChWvzmyCeeNSlxgAPcP36knA2nDqc1ny+UrX51OXMoEdACwpbJeJfaRpw6fiRZxTsc8kntUTEitcw6dmcywKbWluBNL7xve9F2ouyZMdP5AkEhB1qaUuUYJKdo0qBNGsFW0akAMRjVNVYwLDbNH0TThJH/aSPgjV/yjR/UR4XJVrwngUrtla/7wNQbYB8Yug2IOJdlGV3btssaBQpOrgxPusEwkxKYiJrFVNHIgpS/RlAlBL696ymdAd5L/xk/0veP1Crp84+/bTl62D/Yeq1bKPjvp2Hql/mRMBtZcvWahPXgXg15tLZdvYOCRu9bFak0pCI/4HL04ateU+3zP2k8dePfevMdE3o4wwFADCMK/qtN1mT2ljRKRMZeTR3m/3gFgvwiOsFKvbSOsusLmx3rsffvKIi17X13fc431xH1Vbe4wqt6oQrufvjLZAaMPLDbNSdrxu5HiuPBJMWVOMkRfKmfdAsdJ8yLzb/EyPGhERWLNFxOtjU2gVRzSbnoyUgD4C+nD/zmd9zg6hT1JPg9LwTGSUVeEo235bpCSWoJ7UF02ixVy+x4SouUY99Gn/MvE3hiJ3EOv9R/Sf+tT6XEtlWhTaSeN2q6WNlyv07cy0X97kdshqiCdQqPdZs6acyZTdESWNyHj1WvN16Q67jto2kWmV3i+/r1wt36eliqHVkFIrAltNk3ZToh28pJlIpdRueLvvSlLUVkZIHqqeAIGuwdORLaZ2Cz1WVaSNuhLbsz75g9/eFBM9vqBSYQB+LQtTVqmpMFLsIVrHCUqAB9Svbr6rorX3PZPHRkbvEpFNXNMVc907KuTTRHRiq4Vz63NRVfWAiuq6e4Ky36BNKhJn1wEPrHaMVPWZY5vtNaOThT5ziDyy3+F1vE+BqidVj3Z3oZE1WYd70hPRFqj/PsK2og+8+qsXjeHCcYM99VQb5LgmoTbFs9OsiqThrK+skpCqmtCaoXG5vFf/r6G0eTXUX3/Ab09bqZyrRhFX10PVKWdBm//XelV+/PqvTWmEjV4FfcgSHZy3BTPk6lCozzY9bYIoHN78su3Q1JtDQ11kXxNwof/63nPfSdXynXN7Izuqp21e1kncw+1WCIqFZjrkATKiROIdSPXlxxwzJ7j88pIb6dB49lW2olM3wGPDrm7jksSsbuPNyKeWTbQVXTzZO+fy3T2T64PL3gngovFLdl0jIakqgjDH1oQ82hioKprN2rru72NDWzDODejonqSAjbGt0hAr1ob3Ds47WYWUOHF1FZH3nFG64ktx/JFFx+w9JwDgVSjI54uGHZv1EUxSl0B009oLC2HRCNQ4n466dxAR5W3eoO0Narl2RDwSn6xdhxNH+bBQCEyAmmusU6V7VSp0BQWTqjemzZMqq6hsBFFB3TU3a4xKO4Tg3kOOz9mhCd+18KVlbpkny0IFdjwuzHGKmtYEUvN5NLwiEQ5sYAK2WDxW/lIP/UW55QPXtEMDIkQ8vTSdgCpK1YrQOjginiEZRxG1Seyd1fLClnBSrfaet4+mjY8b5qNCDmzNN6VlmnDEFGhLjCWR1KrmEkl8zoTbgXDz9b3nHjaz/5Q7R1PfFkyZrgDATG8Y7pybNZQkn82dnScvzO0E0H9G2ICfRUIiUqjSY9XqwBRsc2ZjcGB3FUlJZaX5IlmTzxTAS40xR6iqqnhaQUog8U4JeCuAi5aMv1/W8GR8Llc0zaR2XeqSm1m1KC1JKXPCqVNgKhGfQURBVk1hTfOXvl5Pajsr4QNM3KMqrXbuqpYDSn36GyfpHaoaKEg5k8wKCj44sMGLU58orSi/xd57yYX5KYlLXwfgZ8PiAtGvas3lX1VRsy4zMdMClKB4H7OdKuoVG6HqlaqlrPKpul8sry/v8+pezMQlAMHI8xIRVHSoofXvKbCMQCaTfigB6d6W7YHOu9Wqe1EU8di78w8OueSMVNzuUH0vERdXJxSO33W84G5ASX+9NBn8epKmiVLCbWfa8PgJ2ACpKu2SY1tOvVs/m9962Ywyw9F9Q+Mr44LiEU+nTYFVIypGBTkoQxkB5QzTWAalvKyQ2EnNZY3Ha/XGl8fW5FuvnHtGo+2lKlXnKyGWFbrN+j9GAhQjFrxCqVqq8vxp87UUf+ouAB+tzjj/m/BplOfwUA/PqU+bIPbMbFREA68m68JNaPrEByYYD6Wbrn/j2Ye/rVq+s1IqmfIID/G0lktfBftA/bCeQKrkVCRn8z1Nqe8B4D+bw7C9YRISkVYzaeaSdfn6sVfN/YQJ8xe3Fn6rIwRIvCcC73HKd37edW7poDWINypBmDPNtHb7F04/+IrRF8VPt9N8/v8ROMhmNa1eLL+O/re3d67dZ+I/38rEPU5EKQtCEMPWeO+vO+e6j3/9Gb/x/u+OqdWGbg5t7o2Jawq1XWdEYsgyafOVAH62pLXgzrruuIcAnL6+w/vZIy/Z2ZrgnUnqBEQbbCdpe1M+fcPxjwGIAeCct1/28tCEeyUu8SAYVfU5mzMNafzutJ8e+/FVz3H2IRfswHl+ZE22p+kLptMRN5ZrAM4GgMqsS/cOjH1l4lIZTd2bX80m/WG3nvlLAL9c2338/E1ffm0ub8upS3UTa7It5q4wVcn/pzf6xlhTOGJJ0nAgyuqutTo1tvz1Oee9BGTY5O2kWkG/hclBvGf/6f/F020iKgtttihmUlQzLaJSKhmghFK1/AcAh1038/wPk+IrRVuYUvPNOlQ455UYGkornolAJvGp5EwwAUHuxht6z3nTEdVT/9l2xiiUKCY57Yhv9RBkdycCUSJqSestmy6IsQ+AWzaHHclu3HOsrHGxlFDC/MnzKJ4587Jjr5pXDovFGWm97kEwpEriHQCMqzfDqSC6by02EEBRrFQqZv78oWD69K4UAJYsWcLjx4+Xv/3Tjl2XrbMv6qMIEdX+/s9dFOhW1VaTcxppj8q3orHNCDXSxN8vL/9/R156qkJ+u1K8gCplQW28/Uq7DJTKpeo67+jTFk6mBVMWqaYLg037mCOulKbT5IWT6W78063GnpOWShVzwPglPH7JeFnS+nt/fQkr1knToEqpwkvuv32d77e946/eRDrNAAu8X6Tda9MLegYfpw2JRdLeyFK17P7T+/l4QlicvaRRdyCy1PaJrDwHXZfJ2aZ3Tze8O+Glf/rM97P7qBhg8xHR6PalqgeqqJRKplStCM2lK699/dd+mYZ0Qd7w25zIMogWlFQZIKHhIirc9KnP29xEeP3pzw/82psP7jt1URSDy6UqoQrf3a17GTU7Jj5dsTC0FRMnKqr0pq3Sy7amaOu2Jb5UUQNV4u/2zyPiGaMQjdWQ1nEBkpTLZX/MMXM4jo/2LXVBZ8+eLdGXb1rnUOg4juWUwy/NIUfhaGqFkmq1WvalUgXtqGyFCkGJ9eJ/px6PWw52aNuTqEWYAp2w6o4WTYt0Ndcwai4YgfSzR16yiSNhYy1XIZVSxWi6GkN+y907LYp09uWzJWr9PXvWnPVYJGUfIdLxs9Z/xx/Vy1SqoFyN/a1vfuVqGZFUqFKqmIGF8zWLcV53Uqpk3ib37zdH5S4Tfn5Z2nRKatoRCzpcmhZQgesxeVtz6R+Xqvvgvnd9/l9aqpi+6nwlbDkiGp2YCJVSxbyrWn6ogtI7u9/yhi+EYXDGMk3EKqU5CBkBK5NpNXUyDdf03UFhz8G08T2lvsP6oj6poE8JIFKzUIiXMHiC98lKeVfMhgH691ZJSOtIWwCVlb7Tn2B0Y6qyyDpNICLSKFJ++ulbeKMjRQ3J+udAkQIXoR1Ps8qCBgjjgSyRNM40JGyu2sMdDD8TV66WfWVaFP6kNxpH/bR0nSSjKGKKy/6B3ugl1vC3UvUqIkyaJXS0jXeqGRmNC4p2STp0y5Afeu++d3912dyWZLW1jEJrM+AS+oR+SWfefODX788bvrSpFA4KJCD1gaqzUKtEBiAzlNZ9V677wMveljsjjumL00sVUypV6PM/LP/7c+VvHh2wvcEQZ816VVPLQTCUDP1uPI07LVt/5edugTZdRzdTkjQo4Pwq7dmJvUugIgd8IaavA2g+q09fdXUGqmc8oDPfdsmOOVPIJ6tcsunJPxJffXRjiy/f503JGc3qRDNNuGm/L747h+BEFZ18yxu+OuvQOz79rzVtWAoQFiygew85PqdN/Xaew57laSOrHzQyEDMzK7sxNm+XprVrlmDJh99w9/n1CkpmTcmpzxZixNKHmOb2RnbmbSddccP+5y820AoZtqmKTQEESmmg6lnVsIKXIF2+tLvn8198z5W/K19T/lUpIyXzxUr5Z59915xTyQZfc6JNDkPb9P7fwt3lU64p14GIsRkSy3nrm2ZFB6C5Cn+ZZrOm1tjDP3/WLed/4ezbXh595bZdo6gSbo1LpdqyG0Wli7clxv8JuXsZdK8B3Uuq9xaD4r06UD8aAKLeuVtiU9AoirhULQkRBokIuuWKFGw8iSrTKOKyGZIGhHBe3uSuYabXjwt7dgf7fQFgxrzVz+1qqcRUrfogGXvqhKD4uoE0C3psi7ltiKjvMnk7IM2b9rzTvf8Nd55fjxBxGVW/1Y4VoDP7Yze3N7JH/OrknzZV3svEZGEExPCGw7rhoG6NekK6MG98g8g59edFpW9OmDZtvk6bNl+j3rn2S9fOPreu+oOgMDbniBJn+JivXfO+xzL76uaR/LcqQlJV+s89Bywl6KPGWBCNjNsg8uKRyxdPApu/QeWfptizy1atEiUmz2S6vKRQlSy2SJEQEUQye9Pjg/duGYllXlb7QhRDG5NXt8XmQsYMRqHk2SUriXjcir8nwDB1J5JK4l0zFScKTtemqpWqFXnggC+81MKcMeCSFd7SYdVboUK+O8iberj8D8ubrgztU0XEMZ4bKvjM/thFvZF9/7xTfpx4d2JgQ0MKybKeQAqyDWts0kjJLBlQqH1F3bnPxHEsCxZMp77+GV6hpEEwO0kbdznnzjz3+0fP6+2NbHUzGu+3qpnZ11cNqlXySvQvZqs6SnRdmtadiAeArX5iOOM1C3VYqaJNq0EFPSsiP+kWUdlaEdvajtzOIvrXwV0XIeK5vZElQMvVcpIZqHmHEWnyK/9QFnPGmnlEOUt6X5sUQUrizi7aXJeTLNZreKaRQlKjYagG29/3wITX/+G9+9wd19DXR4Tnlj0w7o991BvZ98075cK6a17SHRQM0E5AVijApNrd5TVfGBhKC0LHnVae8+pqtez7oixE/9zvfXBo4WCyf/c1D1+gqtS/mVXVraqm9uPbLWm5y6XixX9wxKZFK6QoGHpuWUFWk54iz9/ywYqxhaBgmIwhIoiKKQZF1Fyja3XSULVU4fnV+RojlrgfUumNuseF+UPF6f944OCaJACTWXWPWh+bWKVUMRSX/UMHxQeGQm8dcA0hYqMjQw/THOyY5Wlh13s5nPDYMePOuvMBLZUMxbF/Lj6Jvv4+3xf18VXz+k6lFK8p2HDfejuGjgAitgrAivIEb4JgoHEWgEOBvtajUbryBhoAgJjizX7BWxUhTX3sGB9FjzHq+Z8nvn5rd8+4QwYHl3oQWsWTsrDslpTR8V5tdVoWKEYs1+CSbw4m9denkiZERKyQ5TpgQbpqwBHN7Y0M9ccOLTXght7oJYENP8DEpYDsHhQw6i5ZeypKJuOI0uqTdEvT5uvc3shKIp8LgoCa2mrySgoShnjWcLv/Nift9lB+0NW/Nu6sO2+fG/VaiqubVCpQVSpXV8SnrS18Zlh6zPIkCQBanUHWugYIpBorHY24UXnzuR91xt1h2RQFXlvlTLIumUQmcYnkyR541sEX7ndmfMJvstQS8utS6uZ5SUiZ2tanROSjaO7/1IaWfTeXKx5irIV3Dlnup4LIIE0bBfNck5VeGKSE99z0yf9doyqxQvVpG2DzSZg/EMCHReXw7qAQNF2KukuypG0is4asfwEgBhRYMmA1o1aR/FVvZCmO3X1vjg9m5TcNuCRh4iwOzVkgSH1x9/80e6Ysytea9O90aPc+jX7FQP8m3fiiKOKWbdSvrMavecGP5jVc15grAknUG9ly/yl/v2bmuV/tznV9sZbUxBN8qw6Z0ayPgYY2Z1JJ/x+A37Qi6rcYGW2VhNSKwaI4nvkUgEPjr9z2Nu/SGd67FythKqkSEZOoT5IUw25z71LiwHQoYStAFEXcF/c9YxL3tSp2ttKs9YZZUTFIw+NStR80TNMDMqinTQwkNU/aKk0yikaWBQ2rgMB5E7Il5oZLB59uLr9Mnuy+RQFC/8oq1rwZEPQD5HFMPghp0HtPVoR9jmnskjS/y7/BhYEcSZ6d86dtf/nlNS2VDFU3nUetVKmYuFz2s6+6fXtjCp+1QdiV1GpXfePD9KvRKqiOVDXLcdlf+aErX5zj4FQDKjbVz6Fv02/XlZT6+vs8AE6snD+U1N5fMLk9B6RZU2jOgEwrl9okrqkBBwd85aALX3HGL074a7v66QuWkFZItdmMjM448HoA17dF3VXJq71zGJv3wLPry95EtYae84jjWNqBoauIRgoA1VKFUS37MMl9eFJh3FeXNAeQ+FRTTQVZja3V7SwCVTXMpmDzJpEUTXF/qUO/p06unfX7zz006mSKIqY4lnvfdNY0gj900DfgPedIbJrb6b+U2/E/AqjttgWzrJ7M2/ai265vHbPJFmKrEKH/xJX9O4L51nx3zzQlgjbrb5191R0vm0P06GhSUDsj//L3X76DJXtLMde9G6nCNZYfetUHr3oFfWf040ZT3SpZV5WhH828IGKmH6nQcFpIK90AHiK5oJBPxX8IwMnt6qdbClut/7cdrR5Fc20UzbXtziEjXwCwYMF0iiJlQzS2lemPjYn9IyIQyTYKpdIon+eCvI5mv8qep9S21vF8vJXrtVXtOiTj62nTp94nWaE/MqM8PIWqV6iGbLkrKBivMliX5vdE5dCBbe7Z5/Bfn3nurN9/7qEIo7ecmteOSdL0/d2cz7lG4NmoD3d8QHNT/j3ol6OpA0aaA17Z6ZeQTaxNNlalSsXERPKJK2/dkSzfGuQL02rLlyZDy59ObRCOK9TqewLAgukrZ8+3yeirp313z6DQdbs1wW7LGsuSZY3lqeFgIovsCawoVbzW66iWRaFUfvPT19aSxj1EVCQiTy0TXFYWV9n5RAl65NkHzBmblSeJ+AVPSO3JGMczXRzPdKtrYzRt2nyNYxKnclAu321VZUXhNQKJF1WiRaseZzLnwqjnFMWeBNL5mD+8QMqlKpdKFdOAdIMwSdSDRnTLyyq38RMAMH/h/K1p4RMAuvzuy9Ms10vGqG4t/gB2IJhRC8ApRAFHRFQMCibHATnxCwZc/XSoeflB8z7zPwf2f+bWcrXq5/ZGNlpNjJACNLM/dnrMMYG48LChlNTu8FDS/YpfS37SwzltBhPIUz6Xcji0VO6YfOHtv1QFbSpVLYqUq+WyP2bObWMp6LouKHRNS2pDXkEmF+SDyQ8ufnK3Jwf+CVWqlkqyKhmdF12768QBe0sIs2c9bXgBTC7IB4mk/8o307szoinJOk4ErZaqTHEsAfElockZVc2NXAakIC9Oi0H+RWyT/bNrmb7F5vNW3kpbqTfqM1MWTF8dGREwnaMv33oQG/uppFnXlUhWlUQ8AVklgQULFmmlmuWZNdU+HiAdYOJuEdFWrQ5O0qaEHL7x1Ldd/Mq4etxf2qdq69GnvP3SD+ZzxZ5mUvPDpUGIlIih0EcA4PE9t6M1tZl5NgzNUW9kx0/Y7lWi9NIsi3triI7U0aQhUQLnTMAhBzyQ1usNSW8yXr7n8o/detitFzWzL0ZcLS2gcrUqa0rj6IsiQhzrv/60+0vNhCXT7Yvv0tyExywtm0rqAwIJECCgADDE38wedomxCaKx291hjv/unWM80utsvrhPc2jQKxFxGPDkhweGJt3/1FHHfuuoxyKsULuiKOJyXPZnnVGZnH8y+WnOm11qru4YRAEHJvHpYqv69nJ19rL1rXAwTF5efzzEzS/lrN02FaetMsuwALyKr6vyUtBbAfxkS86IrZKQ2g/yc1+69TAb7vdV/yrvMEpbBsXrBcAYw3ZXEMG7dGRVEDXGwvt0ERr6NwCoVEqSSVpKF1xPS095x6WPMPG2I21Aol6NMWPJBj8+7Z2Xn9gYqt824bVPp8sXjBkXuO4PgPCZJG3oSru6gp13IOAeANh765GM9KK3XzSxqfa7AHZOVba3bMa0CfhZl49aC4mQSUMMsoUgb7wKms79M/Xuh6mnH7ztV58eLk3T7ri6cvGzNRhzMY9jQLrffP0RE8bW7KAf9FiyI5MERjkrQhswc937x8JC/noAQLkqGz+HI45j6LEXV7odkp+Ehe79m4ODXgmEXIiJjw0Ojrn30Xcfe8VRP28brVccF8tZZ1Qmj1vibi16+/Kh5pBnYjbGsgiW+DQ94oPf+/A/oyji9a1CSSCNEPGR/Scv/eaBF/wsx+HHnHhvASuiUmN2y5g0IYVj2u+0I77VU66WB7aU63+rJKTp06sEAIGhiWGua3pC9dW0K2rVhXDpCiv4iq3W53IFO1QfuPmL8SFPl0oVQ0TZQ+/tM3E/HAE3G2P3hU+G60ATEacuUWuCXQH8LFcIHh38+7aLDLCjCYKJzqet8INhe6BYYylNG492a/EOALh9yXh59kk9K9beFLOTtfZQJoYTBydORxbgz+xxrAD+8yxISEYBMHFYNDkMprW04dNbAFw1MLTo1vKd59eBFaVgy9WyrHdSa1+/V4AXpotnqGHC01Ob8LliVsOTAMB3h9YubTZvHn/B9Us1AlO8cTFuqlm8XNQHWvTdbefkimP2rw8OOAIMQqsTnhiiMQ8u/OBJVxx1cxTNteV4pmuTUV9fn2K7vYtd9wzeWPT21bVkyBExGzYswNLUNY6Y/b2P3BH1RjaONyxqenppOmkVdInqj/KSfJQVXCMkTxvGELMlgI04DdnuKj7ZA8DdpVKZq1X4zb9Jbc0gOJc2xLnUpWkiz3w1JHWpYJXuJKqqhi01m/WmwlyQqXelFew+o08yl437USOpNxnMIzP1iYicd+IkVWOC7QMTvJLZTEzSpqj6lVJBVFVCmyNi+mZ8/dFLS6WKmbYZO3uuv5HeOOddkrpUVEWe2R1G20rnn9fHQLopIKDlATNE/b3LktpXwOZVB992xtsOvu2Mn5TvPL8+0jbUqv28fsXXsu4A+mjzNeMVePXA0m5FUiwQC604k3LDeZDwzxWgeejljSWjcrnKc2i2XXzpL68Mesa+LyMjNRJaHbck5Z5Hnj72/134vp9E0Vwbt8hopAd53J+Wf6dHwn0HG0NOlZiZCWyS1DXeN/u7H/nt3N65Nt6IFI5ytewJ0Oagv2OZuH8/bi0eNmwGjQkZyLrHESS0IRPhdS1lr2PUFhluY8Q06ova7XNGSkbCTD6f7zLOpZ//0hkH3lMqVczITq9xTBJFEZ933Qn/VPFfzocFBulKEz4rvEbkJNXUpeLF6ardQBTqckHe1tOhf3b5wgVRFHFlHQ2MWwpeXNY1ZJQ2RKrqLQfcTOoLm9K8JfMIbf7rL1ezOjoDnq+up27GVA1fPev2Mz9z6M9Pn69QqpQqpm2M3qhk1r7sfnPBU7sizY/j2gTPDB5uIgCoZea6k0EP/i0BOi/eqEBIKperXK2W/X2H73XZmLsWHZUsXpLAkFFjZExNOP/wU5/8zLmlb0RRtBIZVctV7ov79Pyjrr6yiPCdQ40hByLOMjzY1dPa+2d/5yO3zO2da2f2z9zoyPEIEZ9y5yn1/1j7u8Egz5TVM24VF1+hz7PijVuOjrYgIWWF99uJlvAAtf6uqdMIVDX7vq7pBXWtlwQm5Fyu29aGlp3/xTMP/d9WYNczJlkcxxpFEXcvWfjlejJ4bTE3JmhNUqcjpaVW6yNamYhUVV1oc1bELYTz742vP3ppW0dfddGv9AK8Qr3SGnIhFKJofbeVpDqijdGGWLWHj2/9dYA6w8aEJmSn/owzf3bSk60oYh3l2a3/PayDob18++nL9r/1lP5X3nba0NzeyEZRxATS9g6+0ZNuQSnzgiZjX5FvTAZARjGCllU1xwwo/rrNpTc/AQBf2PCUJCqVKlytlv1pb73kK2Gh6yPJE4tdrv9+gSAdg5wp/GdhFJ/9zkszyagt4WRkVK6W/XkfvPqcYq7rQ7V0yHuoITYgNlRzyfuP+85Hro16o01CRgCA3mztT1H9TVcr5jvb+bMSqNSSYUHYI4oibkmom1163mI2JALyuWKPUYEh5kyeNgZJbWgsuZQz2xFIodQ3vy+rs8kU5gtdhs3q2ghRdh5uNazwDt75/zSGln8p/uyhV7Xbc69G1Nc4jgHARYjeXX+H+TKTOSm0uVzqE3hxUIXQKklUCrBhS2GYt2na+E8zbb7n6zcc/5dSqWTiVQPpjHDe9piRPy/em0JQRK0xkF/DcHUXgqIhqCFiZG2/8hhsJGPXd9yNMAVhmDNsM61UgZZHEKlLlw00B+JP33DclasLrkvFUFc+NNRuwUWAiGT3kDZyG7VJAVQtlbhUrQj1k9vUnsm7x9/PALwu3eYlxVyOEmqu0peOJGcN11L3x8xg3mtn9vdvyIKn3t7IVKtld+oRl345FxROrzfrXkI2vHAIY//4hKWpubO++JV3fKGlprXLIlO1lJHRVz9w1ReCoPipoeaQB8CGSI0JOEnqJ5z03aOrI9W7TWKnbbU72k7l/2ppI3EEbhLDUrvZGpGIA4Dt0ju32wbA460GoM9tQpo2P7OniKdfNwaX35w26qqkTCAhY4yKLDRsHgOAcjkzOmuf+jiOoaIPNRqDtziXCOSZrbqJoAJlIjOkqo8Tmf4aDf78a599+0DLrKRrXxNKMUhwHU4/+cgLf+hS93FD5iAi3tUay0w8bFBv1zQS8Y+lSeMHg9I8+5Ibjl+8anh9u4StDXVxc6j2AwJP8CRCAEFJBuvLiRS/BYAlu94uuHsVsZXpJ/W05lOXOoUYKImKGgX98aJbT0ywDknu7WtY7pMHurxeEXi3vVfxCjUMXkKMfzST2jVn3PSp+9vdJkY7vtg1ZmEzfWoOk9lZshnKSqq+IcrqrwSA+RtoMyNA0aoJvTlw/5JdBbgbBNpphfSqK7khvQpA+m8AmDED2BBS7O2NTH9/7E6bdfHJYVA4o57UvQBMHmK7uqzc/0TfORcfF2epIzPbpgGa19tnytXYffkDV0bFXPFzjbTuFeCAjLdsbS2pn3zKd4++aFOTEbDC/b/MB/fnrSzdETT5SdWkljWaBJOSQpSZJ6v1EwE83hf1UTvafjMKLlsHoijinR7eaSIAPDz48LK4Gicbeq5KpWLK5fXKv6EoUmrbmT5dmjPWN9yLENDLANpBgW4iUvUyaAN7N6XNv5790+MXt6/7uVw3e0vnKm0xE0ErX06h9NTsQ+d1hfbNg6nzBDXtWa+ABoYphcyacvHPb9qQ3LX2+J3y1ouPC2z+otSnXlSYlCQMC6ae1s6+4GefPKNUqZhquTwsrUe9c23cP9N94z3f+vhQseuypiQeomxBvhgWbaM+cOap3//wl9vf21zrXwFcfNgl/8iZcFrimulSIiw1ZA2yGZ8L8qaRNGd+9aZPzNsSc2XL1dRWpb6+PurrWznp8vLZl9vZl8922z68y7s82YtCG2JKftcTAPwoiubavr4Zax2AcrnK06ZNpunTF2mpVJK2e399Li+Os7w4zAPH1dnLAPyt9Rqd9EoVU6qW1tqNdLRE09ZOg9UZbNeWnLq+ky6KIhp5vmqpyvMXzifMgMTx2ifYau8BW38Tgyc+cFDRwEx2kvXkbmueSlAmIieaWtb/ZuL8tPXa/SNEHFfL/uRZF84ObeGipE1GIARh3tSTwf+94Mbjz6iUKqY8gowUStRP7jsHXXDMxKZc5txyWcLgoSBUW+yxg42BSzIyimzcP8NvPtLO4oEvBB4HaJoAPB5gK5osIQra8SFsdNstaNp5VkGthD9/2YeuPjYX5C/J2RyW1pZ/9JNXf/CKdRRVN3l/cYVSX9RHCxZMp2mrpIEsmDJdK9WSrGf/rw25xlWP2dj7bB+/oefZ5OO8eTfAlsv/mN5JAeX/ERizTSqi1IoOV4JaIvLQmimYaRPOvfmhdhLuukr0AFC7Z5t3EviHHmBVySoLcajONS+78KbjjhvhVMnIKIq4Lwa2O3zS/4xHeBVr2uwOyBqAma1fyrjwHS977LS+ltpMmzEYsS3dX3jYJVcVgsJR9aTuiciwqtYJ6RIGBblikPr6h8766bFXP68kpOGdYUX618i/IFLnvRNHBlARALTd4z3rmhC66nlXEt1bW6Ou+8ojRYxWj6/yM85LG3D+Ue59pc+qIxpKlkYnvFGPW+NdrHyMru48K98LsBoP13OnK8DIiw6sqiMPxcq1RxUgJqho0kT6FDJxT9eN7DL75PvvvLNnm3/9/eywaUzq6k5A1hD7Hkmf2MkXYiBzl1fbZNRyssyZNWcS+fQsIY/Ei7HWuh5rc4lLn3jRw389nX58uWjL47hFxoi0LtSKxSZAQFRQhNZrMigeTTFTR9zLZsUWjUNqDbCubkdrx8sgc2/rY1P39gTSdXmt7rzZOJNu6utdz/Ov9hrbuUjlatm3X61SEWZtZLzmMYFqFLGuw3lWvpc136+WSkajiJ9brKSGibIG97rSnFMAKgO59ZofmbMkou+/7nXLIXqs82kNZGxetT5VxL+Iwu0T2/zBBYdckCtVS9KWpohII4Bn3zj7qYD1A+rdQN4EtpE4arrU5Wy4w5Pbv/LHc4/6dp7iePi4zb4uabi9/XDjFSHAguxEp+gRt8UKjW0xCalSqpjHw8e7xtgxydFr6Eemmaw94dtHfTufPF7NXVy6eK0i4lBPnnYZGNMsV8vJM3/33EL3gA0Ou/XE5et7vd0Dj3cBaB5264mr7QN3w6w5xcbAY1zuj4dWR15z9j4mGI9di7tifG2fu2enq5LKj/c7byqR25nJdgmkoaHe+85qeeFIwhptl/7DBy7s6U7MSirGxNwYXRom7AfGNCleMR5rU0cIwIIPf7hnjLV++8svX20ZlbbRd33Um2cVywF0Ud1DasLKxMi3R1CMDIF0qKugOQDrWTomI4w4Pubnx8269F1TiKoTyRQhokM+kW5bOACKH/SV+t77hThO2upRDEgURXx0fPy8aw4+7x0Q8xMWKiZeUibHPUHxrYNPD/3o5kMuKB8Wn9jcIk4TY3w7+EhX0utV82QwTmhoSz0u3hJEBABPFeuXjOva7q8N0K+++ZEfbDNSD2/r9AyWRlJ3BP18g/ge36zdxcWeP6/uZbp6/mKK3fdMpK6/Li42vt0WyNvnvfmQC3brqRfuzue6/nLz4Zf8tFIqmZZaQmu73u7aom/3FMb+lW1w642HXzp+pIqkURaCcO1+X3uz1up/6wkm//W6Ged9cOTxw9eCiKf07Hn12PE9f3m4Z/AX2vq8/b3rZpzzqWKYu0uJ+40xtyno19YFf75h5vnfqvT+77bt9tAriCX77f8c/e0zX9Q16c/5ruJdhe7Cn9uvWpDeEwj9udg99Jf7PnTlbQ8c/e2T/va+S8evbsfVUskAwJMfnH3iTuj6a9DAXxd96GOvaZPOSHVOSyXz+EGnH/3I/mfsRa3Kj1s7H8kkowgIyBEjVNIA0BDQgIgC7oHB5GRAJreMKut1P3EcS9Qb2YtvPPaWqaB3MXEDnAXF1VzdFYPiO7apTf7hx46ZE8RxLO30kDiOZW7vXPuen3/q9tQnZcsGSSpWRPxQWnPdYdcRsMGPbj7kglwcxxJt5npEChQ1K4aUBZQQQZngCXAMOKYnnzeENMJG9JLQ5nYG6GW1NOl+xueKMB/k2Rpr82FxfFeu+yXd+Z7du/PdL17dK7Thbsxm92KuuAsgKQCtlComjuP2Iv6vqg6FbHfpCotv62nMeBtl3+F1uOBpORvurIqXhc2wAAB9yDxL1QVZ8q8xPDnP4W45DncV1R1HM7jM6AUr8NKAg50BvOLu+5es+tuvHxN0bZezucCQQdHmiAjb503+IyHZX/+49+wd2sSWfb2vPZ4vm5gbs9uYXGHPcbnuF498jc93794d5l9asOEB3WHh/LH5rjvuO+qbe8dxLM9QtxZOaxu2di5as0vRBruL0sTMgr+AVkhp0Kce3blI4PMm5PO/WXjQmR/jllq4VTJRi1r8080aEQ2EzHkohVAefjgiCggb5LRrQ38mbvU/+9jPPn5rKu6dBE6IiRTgobTmikH3O/Z+1F9TKUUhEQ1vljP7Z7q5vXPte287+ZaaSz/EFFDTqxLAg+mQ6wmLb4O1P7r5kAtya7cXbhjanlNVepEQIExQwxDSlFSSAPBBo54Wm436846QAKq3EmFrJDwsglZbZjJRfaCe1v+auuSeRlq7Z6gx+OehxkDr78jXwD2DjYE/DzUH/9JMk5qouHqzLgr6JTBcHE2rpSofduuJTSX6fN01xXsvInp6212/tt2dFPVm63q98aPbvUAu8akkPhWQJmtYG/XUO4FqbZTP/j3ghu5JXPM7DVef03DNG0R8OujrrmjzLyayF66ssvW1x+uuxc2Bvyxr1u9a2hz888jXksbgPcuT2iMCwfKkjpwNXmJNcO29R18xGXGfjja5FZrUnZO6c6JsRvdsTgKUsChgM0aAkwRKLbWNVrWLjZBGn1U8+CCcQAegwzYjQLPCJ6KqlmG9k+1HEvCGktIJNx57i/PpRywHICJ4qBlKa26syb0DSyf+YM7ec2xf34rxz0gpsh+4/cTvNtUd7T2MiCoBZiAdcj1h19vU2u9lLbL7NnnFTwJlkjpjLHmH0Emj2HBJT9NRd+Ixtta0QT4XLJ86btHzkJCGDdYr/Wa1ZZP45NVH3/TIff/a54kHH9j3iQce2PeJB+9/7RMPtv+uePE/7njtpFpx39rQU28g0odCG9qmqzsif2cmkmS5SOVq2SuU/njjkz9PxN0BUs7b3GvG1hYfQSCtrkVKUkLLDrr6MSKVYUM8YfX1tFVb5xlxrnaCadqgL/4+XbjvO/pPPeod/ad9/Mj+U94mIm8jRTrkmkLgt/+097x94pbNoh339OKrPnrOoxjY978PPPT6h+9/+LUjX0tD91ojvG/q3HsA/W89bUoxyO9sgP9HIMUIj95KploiJiLGGnrGEWBT9aqk9bbEOJqxvVytbpp8tA0XkLRSgpnZ3+9Y6EmbaVIjOogzkZLvCgys4Z0AANMWbvCCHyalmz/5vaZrfNRkUf4qUFNP6ouLQeGdYycm36+Wq9wXrSCXdtvr9//ihO80vD+6KVDOGvbyYFpLe2zxXTcedslFMWJBtOlIqXUexcDjE8bUkondQw2MaaTFnPNh4NSGTsJlk3r8vXtM9o/vPLEObJna2ltTPSRat5IKSribdM7/XD3ZQ3ciEAh078Shrvtb+vlKAYBxNfa3mDlni+qNRKye5PSoN/pZqVry7WjeZ/Omy3eeUh9pU9r1/iW8z69n33Ltm8+Z0xXkT1Io6i6ZBeCuGfPA8YrkT9rn8tmjt43O0h+eAPCj+z561X3w+HXi04KKvvuhT3z/y3RZecn6VhpchXAIujJRt883cGA0ZYhcRdTf4MY1L7ti2phm65ls8XHedfzeDNztQXg065jF2upZ0kqDJDAY4v2emYQ0ZaOusU1KJ9503JUXH34xrM1dAe+FJSkO+prrDrpKA0seXxTH8Senl6YbraoQqNUKaq6defvM715z0IXUZYOrDQNePA25uusJi8fdeNhFoPj44zUCa7x+YSyjoVoqM6rwaUK7WNLtQQphghGFgOTJnSelS3aYmPOpe6pYNwuBrFz080lCWgfb2rDBebWvudE8o1ASy2+0HHQxGyjRXeVq2UeZwVdHSCE+QsSHvOqxWxKf/o4ACjnYd9/ipJnrIiVtoZsmBajt8r9/1/GiUcTGoNr0SWLJAKQvBYBF/SuV8lWFUvv4VV9RFLEeMyfY/VsfutvD/9KyIWPMdi5JX9wm601skSAAWMZ+PDF6pxbGnZtbVvhSHMdSKZWeaUyPIt7c9qeBqd1tG8m/Ei8KVcaIvBGCUjPTxvca6UHcFKR03E3HXdlI6x81xrAlykPVDKZDrivIH/uDt5z/9XK17KulKq+qvr3nFyd8J3HpRy2xt2REFTyY1l1P2H3czw6/+EKKN42kNLllO3SqexbDohGCs6lQUgjT/+61g3tqhwkmIAuj+l8UBhcCoHiU7IHnMyG1SWmNr3nz5mXdONW/PrQBvHcgaKauzet7xv1ML00nimNRobO9ehhiJebTFKDScCO8Z9X2ulLsz/zqfKU4lkDy93uVwUwcou0qpZIpo7xSdbh2vNForziOBUvGi0KJgd+KKoo2Z6DuxcDmq2+jHiKKZYl3HuBdAKA0SkoGxbFQHItuRlvTDMzICvEp/pE4kLbjkLRd7ZM4cQIAr3r0U7MmDfPUJiClub2RPenmE64Q1/xISExMpKpiamndd4ddJ/7wLV8/v01K7TnYVt9m3fzJK+q+eXrO5gxlNQDNYFpzPaZ4/M8OueQCimNppe5s8LXOa5k2yOgboQJynpZvOyZ95BU7aW1sMTReiI0FCA/EcTmJorlmS5SwfW4FuLXUumx3oFeLCpqu6dTx70baj1ZSiVpS0mH7Pnlz6t3vFCDL9i2/eOulMwmxVLYCKWmlyYxM5ezC9KcAamQtapBr72gboF6p93gCAAQKQVDcAvuKAcEoSTKaRAgAi4996/RHZh/+CmrZmjaLtNSXjaWyn990stQSr0j3VwIBlHrRvDFjQ5++QQHCKNLchqCthh1703FXOpccm7chG5AAyjU35LvDwknXHHD+eZlkvyLcYGZ/7OfsPSeYdePx5wykQ5/L25xhkKiqGXQ11xMWTvjZIRddEGdhHBtu84pjmXPMXQE7mZnC6eI9t00em7adEWtC46Qd4AIY+hMATJ++aIuo3M8pQtJWaaLzj/netlDdq/XfD7x0tx3/uar9aDQpCYSvigoCY1gEnwaArUFKGg33Dt67UkG4jRM7xQyzgXfbbrkHNoqhv7WIvMjpE/P2D4uPPfyUe48/JEdxLBr12k0qLWWiJ/32iZ6niehvBWOhAlmRREMA2BcCA1U+YFPbE2f2z3RRb2Tfe/vJl9XSel/B5g2DBAquubrrDosnX3Pg189uFwtsX9Xsu2enWqqYWTce96Uh3/xcIRhBSmnNjQ27T/jZwRf0xRsYzd2yV9KEP9/+mmRMfrcHXj7VLd5xYs56ZVJtJWIRiXqo0u8AoLqFukU+pwipWs7sHl1Nfa1h02PYAoTfzYxnutYgjzqh2h63PwwsvCXxyR2qgGFzwE1vvXD/rVFK2uQPeURdKCLt3io2F5IaA7mCNeeMd/zrJz5+yOso7ncEaDtYc5PwUdRrytWqV9E7snEgqPIwxZOCa6lAoEc8esysIlWrflOSYtwf+0qpYt5z+6fiIdfISCmrb0W1pCEQPbV68HnTnhEjVi3J3N7Izrrx2C/VXOPzbTJTVR5Ma17Bn7vpgItePmps2drWUesRPLLvzkcseu2epjG2i23qWUeUigxsyGnafMR7/B3IOvZ0CGkVzJ82Odtd4d+YC3Lw4sCqfwCAJc8MOFxZZ+6dZ+L+2CnzV1QVgbFMYk5bVUoqtZsBDDeVV3KpPJ8Ia6tI9yBCUaC6PEkbxcDsmzPmV0uOP/yLD5/8ugJVq37T2ZYyO5IKfl5PPUFa/ejapETgZuql2wYvCgrucAVoXtS7KXO3tFQtSUZKJ8W1tB4XgoIhIhYohSYw6mgMAFRHNFggkM7o7/NzeyN7+E3HfXEoqUUFmzdERB7eBGyZYFoBnX3rtRVUq+/2UXRDcdl2Y8vOEEyr98NwsDZDbRAowH88++xZS1odezoq2zPtoDN9Nmb0alVFM206Iv0dADw267HV1+aGUlt8ZsEHRFUarukCDg646Yhv7NOWkhRKiKFzSxd3g2QbyTq8NkyYDGSPvU/RwaZhRcU9DFDemvxg4hInWugy9rOFxoQ/PHnMYYcM25Y2VlpqqfGi9MeGugfzIUhVsucowyFXaoggnj5MgM5D/yYlbQINk9K7f3ly35Ab6gvYpjkTUCrpNRiSvyiUyqvUfm+TUtQb2Vm3Hv+FIVf7vGXjQw6RqvvhI7uau0er9rlGda0CBhRhmJ9VCLt2cUnis2YC1KoTRa02TkrG4FoAKJW23Lx4zhBSK6JNv/mRyngAr5JM5n5wjxft8n9rsh+1JZ9KqWJe3zP1h11h4d0KZQA2NNaS96e1Bdm7955tCaT1Os0MOdxJRADgb4fdeuJyjXSLlYN4PqOdA7ftZbectzzxZS/6wLh8EHqFLmkkScGal1tLNy/55OEXPPyRgyZQteo1ilgVG2jUh2qpYra//MYaLdrhWl6+DeDDFCRCxrfCWdksb3rJGT5w8fFve8MXYsimUhtHkku5WhaF0ntu/1ScuOT1ziUz3337ye8t33lKfXXVIAikcX/sFUpvveWELya++YZUXe8Rtx7//tmXz07Xd07On59tqk79JzNpiIZrzmQZtao2CDhJawvDEL/MCGnLddJ5zhBSO26m6Yb2Jebxhg0I+ruZ8UxXyibPqA+m7Ynoqj35g2KQe1fTp3Dq71fgiaakGrB9+y1Hznn1/GnTdJ+7L08rB5w9lsl8GYBx6kDEl2XidJU6dLLpbM1RFPGUy26qLq771y5v+suL1lAhMOFQ6hKvqsXAntBdCP7w6OxDjqQ4FiLo3Kh3wwJ5W2q4Pjn1R/VHpioefInKo7uKLt62IUneq5AoOeRDMg7pGQqsd/XIddaXWp1j3/OrT/259MuT563XcVHER9x60p9m3Xzcr7EBBvhKpWLiOJazz7790HyusF+S1AUE004yICaASIIwD4BuPvPMwxZVKltOXduyhESqmbdowzxGk1v2I1Z6U97mIeKhTH8AgAPuP2DU+2gl2soth1/28TFhT7numqrQ+0XkjVD5QsgBWbYhUn96HMcyt3Rx99jC+O+HbF4WsKXEux8c8rNP3DaiDczzmSayh6OqyDrZblbErRikPb5966LJl900u+HcYd7r38fmglABerqRpAa0e09or1t87KyrH/rwAdvNjPudKkij9Zu3FJMolKZOie/xSO7o4lxOl48lWbh9Th7cQ/XR3YWe2rG5fElXYmEOfezkQ3opC+jcLHWAYmSG6BGVIdZ9zDbguPYwzJ9f0rm9c61492Umpnbsw8iWEUTgNGmIKn+zJR1tUa1gSybXBoYtgShUXm8jMc1stY4B8atAhGbacM5n/TpGsx+1dHJ/R6lSAMmpqXcCoJlq84Ozbj7uiaAY/KCW1h8QFSXgbbe+9aJZ9RpdlzfB4QRCzTX+3rTJJ1t2pReA1KI2IKbQGCLxWySlqO3R0lLJTPnGLbc8OGTfvCzxFwZE2h3YoO582nDedwX8wXHF3O+f/MShHySCUgyZ29trsT5G71KVqQpPxBd4FYAdwXhiwFKty/qnts3LQ7ua9KGXKu5/w9l6zJx2n77NIhlTPNyNd4scV6pUOI5Jfl7Cx2nMmFc200YaKLnAK6wCTAxS+Hy+SE7cvL6+g3/f6tMnz09CUiwU8cuh+t9u45cDK8ofrKv9aE5pzlhSfbUXDwCP9pD+bXX2o7aKt6z21BsN7M6WmZ34nxz+sxN+d/MhF+QOrM5eRkRft2xJFdZQ+DPL5kBRQerdfKd06JHXn7y0D320Ud1Tt3LMw7w2IS1O1S9PvF/kSRdj86ktz1Df2l61V119/dJtLrvpRAhmiMqfxufDgEBmaTNNVGmnrsBevegTh133308eusfM/laIwLoSRrWc2a6S3E+GXHNBgQNSEckCtwVsHIHVS32iH+OnvO6/Dw2cVq5WPXoj81x/xlEUcbVc9h+o9O/y+I5h3792JHnwRXn/0PZh+vg2IZb1mMFmiCEJmLx3aow5h4h0+vTpW9xMsdkJqc3mAY89Zqix/BXWpr0f+fZHFrUNdut0jlKZAcB1519JjG0NMxS48+irj260il494zyTF2YqnrK+tBjmORUHAs1TKE3ZKS8KUA+H3x5Kaw8GxlLqXWrZIFU3f8A1D3nrTZ94tFIqmeczGQFAuzHiZGqe11DZS8jstd1V3/xTezfeYhLaCGlpwjdu+s2/E5qxLE2+RgTXE9iwKT4dSpzvCe2R3TC/XfzJWR+X4VZHayclArRaKjH1x86Av2SIW2kkWe1kFajqGEPG5gZ9TXJso4cPOntf6o+dbpiKtNUIvwsWTCeoEuXNt0yYn5j6VIfylF8y1hafmGjwwFRT/NeOnHtwjx6+b5L+atvJE2+PoojXs5XYc0tC+uiVbx/4xNVHP/ixKz729Poee8D4zEbEgjeFQb4VsZ3lr83rmzfqZFk0JQt1N+Dtsv7YHiB9kEB6/5LxUi1V+E03fHSAgK9btmTJsPP+kaHG4KHvvPXE/1ZKFVPeBMmWz5lZe/XVjQlXXvrQNldf+sQWE5pLJaNRr20H9o2Ulva5/MbalEtu+X/w9MamyB3jckFgOJOWvOrknsBctvATh/70qeMPGYM2r6x1c8w8dtuMf3VlwDfv7LIhq6qIOlHqStnkDaDwIgiYw4DD7y57+0UTM+kqek7GolUqWXvvz570/S/1pOH+jeaQkMKQKNgJrFewKhMx1yXRheMQz569T7rgWZCOtrANqZWBvv5ZyvTY1MxGRMArDRs00roTNr/PVI4Za9zFRXVEqw/bXDE5S6JQUu++XXP1BwNjjZAUirnQahTx/Or8F5qLf0Ofz0ZJRRT3u1UlsZHS0qQ5N/3xqf/4/Zc1XURArScMwlTEDySpQHFIzcsUAhR965jXtWABUbXsCfi0zzY2ZSo2ibstsrgzMIHrrul7bG6PWjP9TrWV3xY9x0hpbjTXlstlHx1zxQfGDOhnJvzh/jq3W4u0ysQpARD1YVc3S5JcfVPpgN+UShVTLT87TpwtOcAax/H69jODQhHHsVx87MXdCn2NFw9VPLZI/F8z+9F6tDdaqfAYtatKLlfVcxVA0RYmebGfpjiW6aXpLzQ3/wY9nw3+sSjihR8//D2Ljj38lKePnfWm1qZBq9qWKqWS2ePWW5tTLrv5Cw54Y+p9f2iYNZu7g6EGsr4kqFHE29321V/XffOy7mCMEdNtAeWRqXdEZJYlNd9jcoe9cfnrr6KW6v5cIaW50Vw7M57pzn7fnEPzlLsyDSCFJ4dyk/69xDu74hZUVSgMORkafNT22NOgStOmlZ61zXirH9x2h1TT7J4GYCcmAojujNdgP1pXtFvUDBWbVyQume/FqyF63+1HXDatXC1Lu6D+psTe3Xu8oIMrh0nnqb+OB8mlk3ry5ziVs5/x+Qg1CwBppWS2ufTmv9yXPnGgeL2rO7DY0GTYPgCKiAuYeEZNC/d22VygkKzOPROolUZhmM2Aq7tuG3zg0UPOvSzGF6QPfbq1t4GKeiM7M57pvvrOy/fL++D7qhqIOGje8KR/L6buxbVUAgMSUSJSYwwJy/E/PGLmU6VyleOYpENIq8EMzMhqjzraLwzypFnFv98DQN9q7EfrvFuCdPqC6VSunlIH6bkAKGfDnqbIZwHopg+GJPp988/BunyzsazB7S6rayqP+1zFQOoIisE0ST2IkrXxGJWr/h9RKdzn8rtTr7owYAZowwip3VZowu2nL0uBoxLnnyahQedVnFOkIki8RyopUu+wtDnwNCT5+ENvia+slsqc1XHa+gzdWS3zion7Y3f+O7/xjpwJboRivIdLYbilrZGd+o9FZJpOhMmHxW6T1OoXV8sH/KRU2fydaZ8PhNSqUaavCoxFvdlIAb4TAKYv2PgaLW0pKYH9UcMnC0RVAzJH/uzwC19RrpZlA4PQ2ts8zeyPnRKeJhBUtfhYF01tif6jkkz7/V121m2UUMja0mDJjP6+Vh7f88lqBSaQga6b3WoRFkqr7LDVjf7pjFR2vPWUO5fVk8+w2J7EiSTeaeocUvFIfAonznp1Exqu6YvWHv3qJS+95a79TppK1bLPmnBuHaVrKqWKaTccPa/0rRPJBBWCjnHep6xaJ85qiUoAFAbqZtt7n2ra7m7bHBr4vdrC/ytVKqayBVNEnqOElCUOnluqFAC8xosHCAsnTcj9NRPny7LxayKTko64cXZNVc4lgAIO8gzzGQA6f8PrCOvc4RgW/a9C1RJ3sWB3hRJ6Rx/76aXppFBKvezOoJ6WTee/BGqf7wWt8rX6lm+aMaiWRUsVs/u8/zdnwDW/NS4oWgX8iprJ7cqSAAhmWdrw3TY8cHJ+3K/+tf/n9msZx/XZlJYiZJHb5WrZf+XwS8ef+47Lrwg5/LqIsPMua3fYKt7b7uTuAsLkhfXC2PueeMCPt++plt9QnzZ/vm7JFJHnJCFFLftRvlB7MRS7IytL/+fy+eU62s01NwHaUpKj4JqGT/7Pq2jI5p03HXrZG7Oa0Bs34Zj4rlRSytu8US8HrM1wTCBVkYMKNm8Sn5JXvQsdbB5yq5akUiqZ3eQ1n1iW1m4YF3RZBdzoCjeZgbThDeElgdG5/z7ozC/M7Y3yVC17RcSbK9VkjeoZssjtC4+8fP9izs4rhIUPN9K6VwiIss4GLFpY0R5VlQ3DA0t3+uN/y9UD93u4nWK1NTyTrVxCyuxHzOb1gQ05C2CTOzKy2nQRtCtJSaTnGiaybA3YnwEAGyoltdQspCa5tSlprSmpEtMHv997zqR23eWR35/bG9lytexv6D1nkmE+KhGnTUlqEtibAGBeP6RDI5ualEjnV6cp+md4YfngQFL/7VhbWAMpsan7VBRqum34uRfl3K/vP/gzBxNiKQ+HK2w+Va5Sqpgoiritnp371ot3P+/IS78Npl8ym71qyZAnIkMgUigIRKwUatsvyZAgDMkh/eKnv/vxu445Zk6wNeVpbuWENC/bDcS/JrQh6smQV8oSaqcvmL5JxctStSSqSqZRu6aeNv8pqhpwcPDP39qWktZ/9yOQahRx+fbTH4bSNQFbCthuUyD+5py95wQzV277RO3/9sQXBmS3DcgSFD8t337Sw1EU8fM9avzZQjaufbTb7acvG7RDbxvyzd+OswWrulpJiUWhy9OGDwy/xhDd+uChZ1z3r8PP2C8LV8hUuQgRz+2N7MbEdrUlobaUXq6WfRzHclnv+TufP+uSs9gGdxWDrg95dZr6VIjIrHKClWPZqUVUxAtVlQ5YMn6rmlN2650mSnFMrlKqhIu5/hoRgQILc3bcXZvKfrQqeVTKFVO+7bShm996yTlM/C0i2IZ3X6qUKgfM37ieVKSWzmqmzXcSUU+O7du3HTP0s5/OOD96+7yT/9C+4Z/OOP+1Cv2MZXOEFy8p0kELigBQH/BCyPF9FiWlWBQR0y/ip//vDacdpoWJV48PikcuczUnUEOrSDyZw4pMzaVCJNQV5o90vvm2fx922jynekWYmpt2uz1eFvdD2k8uQsQzWrbDRVOma2nEnOrLNllqdV4GZkCG48Kq8EDmzp9MPb1MwXtFfanb2TFDgaKe1h2IzEpNTUdUilfROhEC4pYzgAEyCIhIK6UKOoS0jvajOIYuHNPYyTjdUwHPirs/euXbB9bLfkSqUPXteqXrYkuacrf94SLXODUwwYtDsvuNaSzeP47j29rGwxG2oeFzr64QP7VKRlD8qfuvnfG/H8lxrurUg8kc7NTtf92Mc/4J0GKFjhPI9NAEgRcPZibn3UeO7D/tvuz4DZeOmFgV6jOa3zi7mypEVT1oDerj8Hd0LbYyeIV6xvrFvSggrfuRzUJKd8QDlVKp9NrFrzi/O8gdP+jq8Ko+kz50pelHlJU4G0gbngimyMH+YN2/jsbjv9//C78YTHtugTR/f+DvTn84RizxuqrdWbNPXPqmr4z3Jngjm+CNIu7tzPYleZND0zeRNmrOekbanbNYzaIgIrCqA7fqHqmQQgCjjwNbphvt84KQpi/oIyAGp3JgT3FsLrABGs3a79v2ozhely63AIFyXWHRKAF1V+e1SkkLKrzPjeXaTbMuOrdoC980RFjcWHb2zYdc8Os/TJu/UqdYgdruoGBCtqi5Zrja87YM4++qln98be857wiNvciy3cEQBwR6+QjxHASGQB9t+vS4d/Wf9tNKqWIo3jgdX1VtT1A0TEAtbYQbtWgJPcWgYJanza7Vf4fG5IICNG3k10wsNDbIhUYbtfVszURdNhcaNJIxm0NSihBxqdonBDrhP/vH9+aM/d8c2cKQa3oimNUZvBWqNd9QBful6cSpiglHFQI5qu5k6W1vPvdhJb3HsJmvIo94oaclwFPWiQoZfZjZLE+bk0NjxpHyFE86DdC9PGhXa+w2OQ6REsOJQy2teSIwEVmTelAtcUlXaNs7Rrv93DBBeRqW8NpxIy51ja1x3W+1hDR/Wqs0CeGPQ83BL2lDHVHuB8NcsNbj57e6lnL1qcayhvdJPWE3vy0JrV5KKgsAWjjw1Pe4JxgD9ZPBeKww+LRveyLaxxtr/rS8ORgTI/CqN63JAF5ueWKo/9SfVt501u/EFj/BhENT8buAqEiqNcvmAVHcsry59Bsf/H28UBExbYzBsVISECBEv3iqvuzzIMoR+EcjP1tHUgcATHpVcejJ37vPLm4OvJiA38eI23FBSq1+cjssWfjgwkmTj1vSXLajEbllFKlIAeDuqQNLpz1ZPHPx8tpOCvx6Bd+t/tlmeYv9UNGvLxmo/0GAB7aZMvhwm/Q3pU2pD32USabRxf/sjf6Ss3zJ+LC411I3BFVdiZi0tfQNKTlv5Uk3wdd93jDqCgKMMeMsm3GGzF6WDLx6NCSBqiSeGULiEvGUt7lCaAIwGYh6iAq8ejhx6tV7ymy+xC07UVaxkGGbjkFoNIthblU1QKEgQQEK0lbdPTUAh1tnSFunLOsWxki1r1KqmNzixybVUhcWA5v82S9ZHLcM26uqhx08O5jb22tn9ve7O153cmH7rgkRWE4OmcNBXxclKEgNoGAS1NX6J9x4STUImAQjimRrxgxt1VSpbXxmMJrqGw95qCjlBJKFDFEWoU9ZKxCmVRZsuw52W+whUUnzNmkUw1w7sj/LoSXAAI2dAqgBIKrGWkpcc//oax+dWyo9+9HZzxGjdtuWFHHb/d8Xz/Drm/wZRRHPmJcZ+2b0x3498p+oHdi4aMp0HY0cFErzevsMkLnk18UL1u4RN6+3z8yslh2AJ1deAJGd0d/nqUqbbJIolOZFfWYGZqAP82RjYk60VDFYOJ+qUxbo6sqztL+DGZA1SS5aKhlMW0jVBVN0fUq9VEolU5q2kLBgitJmLhEzs7/fVUol84bq+XUAp997wGd+6oS/VDDhW8DAkG+IVa/LJe8e1/FGiAMmRVv8bPnXWh2GiAWqWdQ+mshsUokhku0IYQ1I6kK2qRCBBpk0xBjRk+uZZDQsKRGHTRcqU7NZCHPcPoQU8KQQ9bCwmrWmAzN3JKQOnmGcpb4RKSR9iJVe4JHYW/OzQqkyrEL/+y2feZsyTilYu99TksejrpCl9pACIB6p7ipUW9U+Uh7OTiQDBXvVBKQ5BZwSGwUoVfiGiqsrTCoqnijMTkrgVdKPiUYwXsY/UusKJc0FllpWSaj6xovskOR5DIkqsyFVecWZX/nQ36Io4q0lKPI5ISE9n5GRz4ryux23/lb+rKplr1HEiGOlX375egDX33NQ9PZHfeFjRHRIl82xU4+GTzRzZZFXqBKREsNy1tcjaBucPSQVaI6VCKRWVVMlCgOCDYhtNxTeUNpUTRtCPgWQqoat8wxLTytJFgQu1hIMEZzPBZZabTXItxqbE0ghELbLtsZx5s5U66CD9SCmOBZqqY0A6FW/iH8665cnHy7ev7rukrNT7/8SsKXQBKYY5EPLJsdEOVZiAEZUPSm8ijRFlEizMAYoKamoQFJR8V7Fq6pnqO1mDrcPc4Udw1xhkmHTxRi0hFShTkdIYiPIk7sGm2RTJ8othc6jiJa6ln116+zG3JGQOuhgAzS4dppItVQy86vT9K1zT/krgL9WpkVRz9RxewvTIeLl9QqdHnK4nWEmylQ1JC6B92TyhuFVMsUr8+PnEigCG7Ss4ApVRd03a94l/wfyD+XBMyaHXROWJjVx0DQBp4lKKFABKGiTExNM92CSLB9DLGQtewSOM5MSGNhak5A6hNRBBxulxmVGdY0injcPPLM/TrAAvweyml3X7//1bUTTXYzQSwDdUxQ7iXdToJgAQQiisVlhJ62BaJBAQ4OSLAfRg1D8h5nme6UHJ6ZPPzCzP3bXzvzaiwbTxqcDNh8aY8JCzTXggNSDKAXqqcJ6qAghNKphz0CSLC+Sg7BtO/qJCM6n1CGkDjp4HqtyyCLIqVoqM1BCadp8pfikJ5F5Uu9cScRCxPN6EdYLE3oAoFg39XkzFtXWZGCe2xvZmXNPewjAsdWZ510i6k+C8vu6bbFYc3UEqqRZnl2aKtKUCKxCPUNNedrxgA+CvDUcePWDyBW2ysDIjpetgw42IyJEPLI+++SF82nGGsIh2iEhi6asSB6fP22+9sWZBzaKIs6qnGbevupbznlVjoMzVOmdeRPykK+30tUyecgDqTrhpZPCJU/tkBtnPSXq/aPk8IZTL5/9lKrS1lAHqUNIHXTwbBqhMFpJcFrnOuGrEtP1B1zwOoBOZeZ3WjJo+KaoKpiYAU0SAZ72aqwxxol/ktS/bHb/qU8pMhdfh5A66KCDjSe2KGKgD9QqzH/dgRccxIpTLZsDDRnUXbNOUK4RhUsVCI0hp+5JTjqE1EEHHWwmVEolU6pO03a7puv2P/9QZj4jx+F+qh6LJF0yqDQ2ZMNO3aKkWZt+4m/PXLS1EVInDqmDDp4HKFernpBVlVBVesevTr7l++N/O7OeNt7X9OndxMH4wFhGlkiyFN3dza3xPjqE1EEHzytiKvtW4TVTrVb9O+ae/MOFy4qvr0v6Eefd/xWDLqMgN7VnasfL1kEHHWxpVW5F1Yg5s+YUpV6fnTP0GmqO+fDR/Uc3tjaVrYMOOnj+g1btnLMxdb476KCDDjYaOgoxddBBBx100EEHHXTQQQcddNBBBx100EEHHXTQQQcddNBBBx100EEHHXTQQQcddNBBBx100EEHHXTQQQcddNDBFsL/B8bhyFZ7tfEWAAAAAElFTkSuQmCC" alt="בית הספר הווירטואלי">
+  <div class="ttl"><h1>סידור ישיבה</h1><span class="sub">בניית מפת הושבה לכיתה – עם אילוצים, סידורים אוטומטיים וגרסאות</span></div>
+  <div class="privacy" id="privacyNote"><svg class="i" aria-hidden="true"><use href="#i-shield"/></svg><span>הנתונים נשמרים רק במכשיר הזה ולא נשלחים לשום מקום</span></div>
+ </div>
+</header>
+
+<main class="wrap" id="app">
+ <aside class="card side" aria-label="הגדרות">
+  <div class="tabs" role="tablist">
+   <button class="tab" role="tab" id="tab-students" aria-controls="p-students" aria-selected="true"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><span>תלמידים <span class="badge" id="bStudents">0</span></span></button>
+   <button class="tab" role="tab" id="tab-room" aria-controls="p-room" aria-selected="false"><svg class="i" aria-hidden="true"><use href="#i-layout"/></svg><span>מבנה הכיתה</span></button>
+   <button class="tab" role="tab" id="tab-cons" aria-controls="p-cons" aria-selected="false"><svg class="i" aria-hidden="true"><use href="#i-link"/></svg><span>אילוצים <span class="badge" id="bCons">0</span></span></button>
+   <button class="tab" role="tab" id="tab-vers" aria-controls="p-vers" aria-selected="false"><svg class="i" aria-hidden="true"><use href="#i-bookmark"/></svg><span>גרסאות <span class="badge" id="bVers">0</span></span></button>
+  </div>
+
+  <!-- תלמידים -->
+  <section class="panel" role="tabpanel" id="p-students" aria-labelledby="tab-students">
+   <h2>רשימת התלמידים</h2>
+   <div class="counts" id="counts"></div>
+   <div class="row">
+    <button class="btn sec sm" id="btnSample"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg>טעינת נתוני דוגמה</button>
+    <button class="btn sec sm" id="btnFile"><svg class="i" aria-hidden="true"><use href="#i-upload"/></svg>העלאת קובץ CSV / Excel</button>
+    <input type="file" id="fileIn" accept=".csv,.txt,.tsv,.xlsx,text/csv" class="visually-hidden" tabindex="-1">
+   </div>
+   <details class="box" id="pasteBox">
+    <summary><svg class="i" aria-hidden="true"><use href="#i-clip"/></svg>הדבקה מאקסל או מ-Google Sheets</summary>
+    <div class="stack">
+     <p class="muted" style="margin:0">מעתיקים את העמודות מהגיליון ומדביקים כאן. סדר העמודות: <b>שם</b>, <b>מין</b> (בן / בת), <b>רמה</b> (1 = מתקשה, 2 = בינונית, 3 = מתקדמת). רק השם חובה.</p>
+     <textarea id="pasteIn" rows="6" placeholder="שם&#9;מין&#9;רמה&#10;תלמידה לדוגמה&#9;בת&#9;2&#10;תלמיד לדוגמה&#9;בן&#9;3"></textarea>
+     <div class="row">
+      <label class="switch"><input type="checkbox" id="pasteReplace"> להחליף את הרשימה הקיימת</label>
+      <button class="btn sm" id="btnPaste" style="margin-inline-start:auto"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>הוספה לרשימה</button>
+     </div>
+    </div>
+   </details>
+   <h3>הוספה ידנית</h3>
+   <form class="grid3" id="addForm" autocomplete="off">
+    <label class="f nm-in">שם<input type="text" id="addName" maxlength="40" placeholder="שם התלמיד/ה"></label>
+    <label class="f">מין<select id="addGender"><option value="">—</option><option value="f">בת</option><option value="m">בן</option></select></label>
+    <label class="f">רמה<select id="addLevel"><option value="">—</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+    <button class="btn" type="submit" aria-label="הוספת תלמיד/ה"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg><span>הוספה</span></button>
+   </form>
+   <h3>ברשימה <span class="muted" id="listCount"></span></h3>
+   <div id="studentList"></div>
+   <div class="row" style="margin-top:14px">
+    <button class="btn danger sm" id="btnWipe"><svg class="i" aria-hidden="true"><use href="#i-trash"/></svg>מחיקת כל הנתונים מהמכשיר</button>
+   </div>
+  </section>
+
+  <!-- מבנה הכיתה -->
+  <section class="panel" role="tabpanel" id="p-room" aria-labelledby="tab-room" hidden>
+   <h2>מבנה הכיתה</h2>
+   <div class="seg lay" id="laySeg" role="group" aria-label="סוג סידור השולחנות">
+    <button data-v="pairs" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-lay-pairs"/></svg>טורים של זוגות</button>
+    <button data-v="u" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-lay-u"/></svg>ח׳ (פרסה)</button>
+    <button data-v="groups" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-lay-groups"/></svg>קבוצות</button>
+    <button data-v="rows" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-lay-rows"/></svg>שורות בודדות</button>
+   </div>
+   <div class="grid2" style="margin-top:14px">
+    <label class="f"><span id="lblRows">מספר שורות</span><input type="number" id="inRows" min="1" max="12" value="4"></label>
+    <label class="f"><span id="lblCols">טורים של זוגות</span><input type="number" id="inCols" min="1" max="12" value="4"></label>
+    <label class="f" id="wrapGroup">תלמידים בקבוצה<select id="inGroup"><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label>
+    <label class="switch" id="wrapDouble" style="align-self:end;min-height:42px"><input type="checkbox" id="inDouble"> ח׳ כפולה (שתי שורות)</label>
+   </div>
+   <div class="alert info" style="margin-top:12px" id="seatSummary"></div>
+   <div class="row" style="margin-top:10px"><button class="btn sec sm" id="btnFit"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg>התאמת המבנה למספר התלמידים</button></div>
+   <h3>מיקום שולחן המורה והדלת</h3>
+   <div class="grid2">
+    <label class="f"><svg class="i" aria-hidden="true"><use href="#i-desk"/></svg> שולחן המורה<select id="inTeacher"><option value="right">קדימה מימין</option><option value="center" selected>קדימה במרכז</option><option value="left">קדימה משמאל</option></select></label>
+    <label class="f"><svg class="i" aria-hidden="true"><use href="#i-door"/></svg> הדלת<select id="inDoor"><option value="front-right" selected>קדימה מימין</option><option value="front-left">קדימה משמאל</option><option value="back-right">מאחור מימין</option><option value="back-left">מאחור משמאל</option></select></label>
+   </div>
+   <p class="muted">ימין ושמאל – כפי שהתלמידים רואים כשהם מסתכלים אל הלוח.</p>
+  </section>
+
+  <!-- אילוצים -->
+  <section class="panel" role="tabpanel" id="p-cons" aria-labelledby="tab-cons" hidden>
+   <h2>אילוצים וסייגים</h2>
+   <form class="stack" id="consForm" autocomplete="off">
+    <label class="f">סוג האילוץ<select id="cType">
+     <option value="apart">לא לשבת ליד</option>
+     <option value="near">לשבת ליד</option>
+     <option value="front">שורה ראשונה (ראייה / שמיעה)</option>
+     <option value="door">קרוב לדלת</option>
+     <option value="teacher">קרוב לשולחן המורה</option>
+    </select></label>
+    <div class="grid2">
+     <label class="f">תלמיד/ה<select id="cA"></select></label>
+     <label class="f" id="wrapB"><span>ועם</span><select id="cB"></select></label>
+    </div>
+    <div class="row end"><button class="btn sm" type="submit" id="btnAddCons"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>הוספת אילוץ</button></div>
+   </form>
+   <ul class="clist" id="consList"></ul>
+   <h3>הערות וסייגים – כתיבה חופשית</h3>
+   <textarea id="notesIn" rows="5" maxlength="1500" placeholder="למשל: לבדוק שוב אחרי החנוכה; בשיעורי מעבדה מחליפים מקומות; להשאיר מקום פנוי ליד החלון..."></textarea>
+   <p class="muted">ההערות מוצגות מתחת למפה ובהדפסה. הן לא נבדקות אוטומטית.</p>
+   <div class="hint"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>לנעילת תלמיד/ה במקום: לחיצה על המנעול שבפינת המושב במפה, או בחירת המושב ואז "נעילה במקום".</div>
+  </section>
+
+  <!-- גרסאות -->
+  <section class="panel" role="tabpanel" id="p-vers" aria-labelledby="tab-vers" hidden>
+   <h2>גרסאות שמורות</h2>
+   <form class="row" id="verForm" autocomplete="off">
+    <input type="text" id="verName" maxlength="50" placeholder="שם הגרסה (למשל: סידור לחודש נובמבר)" style="flex:1;min-width:160px">
+    <button class="btn sm" type="submit"><svg class="i" aria-hidden="true"><use href="#i-bookmark"/></svg>שמירה</button>
+   </form>
+   <ul class="versions" id="verList"></ul>
+  </section>
+ </aside>
+
+ <section class="main" aria-label="מפת הכיתה">
+  <div class="card toolbar">
+   <div>
+    <div class="lbl" id="modeLbl">אופן הסידור</div>
+    <div class="seg" id="modeSeg" role="group" aria-labelledby="modeLbl">
+     <button data-v="random" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="#i-shuffle"/></svg>אקראי</button>
+     <button data-v="alt" aria-pressed="false">בן-בת לסירוגין</button>
+     <button data-v="mixed" aria-pressed="false">ערבוב רמות</button>
+     <button data-v="similar" aria-pressed="false">רמות דומות</button>
+    </div>
+   </div>
+   <div class="row">
+    <button class="btn big" id="btnGen"><svg class="i" aria-hidden="true"><use href="#i-shuffle"/></svg><span>סידור אוטומטי</span></button>
+    <label class="switch keep" title="הסידור האוטומטי ימלא רק את המקומות הפנויים"><input type="checkbox" id="inKeep"> לשמור את מי שכבר במפה</label>
+    <button class="btn sec" id="btnSaveVer"><svg class="i" aria-hidden="true"><use href="#i-bookmark"/></svg>שמירת גרסה</button>
+    <button class="btn sec" id="btnPrint"><svg class="i" aria-hidden="true"><use href="#i-print"/></svg>הדפסה / PDF</button>
+    <button class="btn sec" id="btnCsv"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg>ייצוא CSV</button>
+    <button class="btn ghost" id="btnReset"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg>ניקוי הסידור</button>
+   </div>
+  </div>
+  <div id="alerts" aria-live="polite"></div>
+  <div class="card chart-card">
+   <div class="print-only print-title" id="printTitle"></div>
+   <div class="chart-head">
+    <label class="visually-hidden" for="clsName">שם הכיתה</label>
+    <input type="text" class="cls" id="clsName" maxlength="30" placeholder="שם הכיתה (למשל ז׳3)">
+    <span class="date" id="dateOut"></span>
+    <div class="row no-print" style="margin-inline-start:auto;gap:14px">
+     <div class="seg" id="viewSeg" role="group" aria-label="כיוון התצוגה">
+      <button data-v="student" aria-pressed="true" class="sm">מבט התלמידים</button>
+      <button data-v="teacher" aria-pressed="false" class="sm">מבט המורה</button>
+     </div>
+     <label class="switch"><input type="checkbox" id="inMeta" checked> הצגת מין ורמה</label>
+     <button class="btn ghost sm" id="btnPresent" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-eye"/></svg><span>הגדלת המפה</span></button>
+    </div>
+   </div>
+   <div class="tray no-print" id="tray" role="region" aria-label="תלמידים שעוד לא שובצו" hidden></div>
+   <div class="selbar no-print" id="selBar" hidden></div>
+   <div class="chart-scroll" id="chartScroll"><div class="chart" id="chart"></div></div>
+   <p class="scroll-hint no-print" id="scrollHint" hidden>המפה רחבה מהמסך – אפשר לגלול אותה לצדדים</p>
+   <div class="legend" id="legend"></div>
+   <div class="notes-out" id="notesOut"></div>
+   <div class="unseated" id="unseated"></div>
+   <div class="hint no-print"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg><span>סידור ידני: גוררים תלמיד/ה מהרשימה למושב (או לוחצים על השם ואז על המושב). סידור אוטומטי: כפתור 'סידור אוטומטי'. להחלפה: גוררים בין מושבים. בטלפון או בטאבלט: לחיצה ארוכה ואז גרירה.</span></div>
+  </div>
+ </section>
+</main>
+<p class="credit">יצרה: עינבל אריאלי · יישומון לקלמר המורה, בית הספר הווירטואלי</p>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="dlg" class="card" aria-labelledby="dlgTitle">
+ <form method="dialog" class="stack" id="dlgForm">
+  <h2 id="dlgTitle"></h2>
+  <p id="dlgText" style="margin:0"></p>
+  <input type="text" id="dlgInput" maxlength="50">
+  <div class="row end">
+   <button class="btn ghost" value="cancel" id="dlgCancel" type="button">ביטול</button>
+   <button class="btn" value="ok" id="dlgOk" type="submit">אישור</button>
+  </div>
+ </form>
+</dialog>
+
+<script>
+'use strict';
+/* =====================================================================
+   DataBridge – כל הגישה לנתונים מרוכזת כאן.
+   כרגע: נתוני דוגמה פיקטיביים + שמירה מקומית (localStorage) במכשיר בלבד.
+   בהמשך: להחליף את מימוש getStudents()/save()/load() בחיבור ה-Data Bridge
+   של קלמר המורה (לפי myedu-applet-spec-updated.md) – בלי לגעת בשאר הקוד.
+   חוזה:
+     getStudents()  -> Promise<[{id, name, gender:'f'|'m'|'', level:1|2|3|''}]>
+     load()         -> Promise<state|null>   (סידורים, אילוצים, גרסאות)
+     save(state)    -> Promise<boolean>
+     clear()        -> Promise<void>
+   ===================================================================== */
+const DataBridge = (function () {
+  const KEY = 'kalmar-seating-chart-v1';
+  // נתוני דוגמה בלבד – שמות בדויים, לא תלמידים אמיתיים
+  const SAMPLE = [
+    ['נועה אלמוג','f',3],['איתי ברק','m',2],['מאיה גל','f',2],['יונתן דגן','m',1],
+    ['תמר הדר','f',1],['עומר ורד','m',3],['שירה זיו','f',2],['אורי חן','m',2],
+    ['יעל טל','f',3],['נדב ים','m',1],['הילה כרמל','f',2],['רועי לב','m',3],
+    ['ליה מור','f',1],['אמיר נוי','m',2],['רוני סהר','f',3],['גיא עדן','m',2],
+    ['עדי פז','f',2],['אלון צור','m',1],['אלה קדם','f',3],['דור רז','m',2],
+    ['נגה שחר','f',1],['עידו תבור','m',3],['מיכל אור','f',2],['בן אלון','m',2],
+    ['אביגיל בר','f',2],['תומר גפן','m',1],['ענבר דרור','f',3],['אריאל השקד','m',2],
+    ['שקד אביב','f',1],['יואב בן דוד','m',3],['רותם גולן','f',2],['עמית דהן','m',2],
+    ['ליאור הראל','f',3],['אופיר וולך','m',1],['טליה זהבי','f',2],['נועם חורי','m',3],
+    ['הדס טוויטו','f',2]
+  ];
+  return {
+    source: 'local',            // 'local' = מכשיר בלבד; 'bridge' = חיבור לקבוצת הלימוד (בהמשך)
+    getSampleStudents() {
+      return SAMPLE.map(([name, gender, level], i) => ({ id: 's' + (i + 1), name, gender, level }));
+    },
+    async getStudents() {
+      const st = await this.load();
+      return st && Array.isArray(st.students) ? st.students : [];
+    },
+    async load() {
+      try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; }
+    },
+    async save(state) {
+      try { localStorage.setItem(KEY, JSON.stringify(state)); return true; } catch (e) { return false; }
+    },
+    async clear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+  };
+})();
+
+/* ============================ מצב ============================ */
+const S = {
+  students: [],
+  layout: { type: 'pairs', rows: 4, cols: 4, group: 4, double: false, teacher: 'center', door: 'front-right' },
+  constraints: [],        // {id,type:'apart'|'near'|'front'|'door'|'teacher', a, b}
+  notes: '',
+  mode: 'random',
+  assign: [],             // seatIndex -> studentId | null
+  locks: {},              // seatIndex -> studentId
+  unseated: [],
+  view: 'student',
+  showMeta: true,
+  className: '',
+  versions: [],           // {id,name,date,data}
+  keepPlaced: false       // סידור אוטומטי ממלא רק מקומות פנויים
+};
+let ROOM = null;          // תוצר מחולל המבנה
+let selSeat = null;       // מושב מסומן להחלפה בלחיצה
+let busy = false;         // הגנה מלחיצה כפולה
+let lastReport = null;
+let pickId = null;        // תלמיד/ה שנבחר/ה מהרשימה (הושבה בלחיצה)
+const undoStack = [];
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const icon = (n, cls = 'i') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const byId = id => S.students.find(s => s.id === id);
+const nameOf = id => (byId(id) || {}).name || '?';
+const GEN = { f: 'בת', m: 'בן' };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2600);
+}
+let saveT = null;
+function saveNow() {
+  clearTimeout(saveT); saveT = null;
+  const { students, layout, constraints, notes, mode, assign, locks, unseated, view, showMeta, className, versions, keepPlaced } = S;
+  DataBridge.save({ v: 1, students, layout, constraints, notes, mode, assign, locks, unseated, view, showMeta, className, versions, keepPlaced });
+}
+function persist() {
+  clearTimeout(saveT);
+  saveT = setTimeout(saveNow, 150);
+}
+// שמירה מיידית אם סוגרים / מרעננים את הדף רגע אחרי שינוי
+window.addEventListener('pagehide', () => { if (saveT) saveNow(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && saveT) saveNow(); });
+
+/* ============================ דיאלוג ============================ */
+function ask({ title, text = '', input = null, ok = 'אישור', danger = false, cancel = 'ביטול' }) {
+  return new Promise(res => {
+    const d = $('#dlg');
+    $('#dlgTitle').textContent = title; $('#dlgText').textContent = text;
+    const inp = $('#dlgInput');
+    inp.hidden = input === null; inp.value = input || '';
+    $('#dlgCancel').textContent = cancel;
+    const okb = $('#dlgOk'); okb.textContent = ok; okb.classList.toggle('danger-ok', danger);
+    const done = v => { d.close(); res(v); };
+    $('#dlgForm').onsubmit = e => { e.preventDefault(); done(input === null ? true : inp.value.trim()); };
+    $('#dlgCancel').onclick = () => done(input === null ? false : null);
+    d.oncancel = e => { e.preventDefault(); done(null); };
+    d.showModal();
+    setTimeout(() => (input === null ? okb : inp).focus(), 30);
+  });
+}
+
+/* ============================ ייבוא ============================ */
+function parseGender(v) {
+  v = String(v || '').trim().toLowerCase();
+  if (!v) return '';
+  if (/^(ב|בן|ז|זכר|m|male|boy|b)$/.test(v)) return 'm';
+  if (/^(בת|נ|נקבה|f|female|girl|g)$/.test(v)) return 'f';
+  if (v.startsWith('בן') || v.startsWith('זכ')) return 'm';
+  if (v.startsWith('בת') || v.startsWith('נק')) return 'f';
+  return '';
+}
+function parseLevel(v) {
+  v = String(v || '').trim();
+  if (!v) return '';
+  const map = { 'א': 1, 'ב': 2, 'ג': 3, 'נמוכה': 1, 'נמוך': 1, 'מתקשה': 1, 'חלש': 1, 'חלשה': 1, 'בינונית': 2, 'בינוני': 2, 'גבוהה': 3, 'גבוה': 3, 'מתקדם': 3, 'מתקדמת': 3, 'חזק': 3, 'חזקה': 3 };
+  if (map[v]) return map[v];
+  const n = parseFloat(v);
+  if (isNaN(n)) return '';
+  if (n >= 1 && n <= 3) return Math.round(n);
+  if (n > 3 && n <= 5) return n <= 3.5 ? 2 : 3;      // סולם 1–5
+  if (n > 5) return n < 65 ? 1 : n < 85 ? 2 : 3;     // ציונים 0–100
+  return 1;
+}
+function rowsToStudents(rows) {
+  const out = [];
+  rows.forEach((cells, idx) => {
+    cells = cells.map(c => String(c == null ? '' : c).trim());
+    if (!cells.some(Boolean)) return;
+    const name = cells[0];
+    if (!name) return;
+    if (idx === 0 && /^(שם|name|שם התלמיד|שם מלא|תלמיד)/i.test(name)) return; // שורת כותרת
+    let gender = '', level = '';
+    for (let k = 1; k < cells.length; k++) {
+      if (!gender && parseGender(cells[k])) { gender = parseGender(cells[k]); continue; }
+      if (level === '' && parseLevel(cells[k]) !== '') { level = parseLevel(cells[k]); }
+    }
+    out.push({ id: uid('s'), name: name.slice(0, 40), gender, level });
+  });
+  return out;
+}
+function splitText(text) {
+  const lines = text.replace(/\r/g, '').split('\n');
+  const tab = lines.some(l => l.includes('\t'));
+  const semi = !tab && lines.filter(l => l.includes(';')).length > lines.filter(l => l.includes(',')).length;
+  const sep = tab ? '\t' : semi ? ';' : ',';
+  return lines.map(l => {
+    if (sep === '\t') return l.split('\t');
+    // CSV עם מירכאות
+    const cells = []; let cur = '', q = false;
+    for (let i = 0; i < l.length; i++) {
+      const ch = l[i];
+      if (q) { if (ch === '"' && l[i + 1] === '"') { cur += '"'; i++; } else if (ch === '"') q = false; else cur += ch; }
+      else if (ch === '"') q = true; else if (ch === sep) { cells.push(cur); cur = ''; } else cur += ch;
+    }
+    cells.push(cur); return cells;
+  });
+}
+function addStudents(list, replace) {
+  if (!list.length) { toast('לא נמצאו שמות לייבוא'); return 0; }
+  if (replace) { S.students = []; S.constraints = []; S.assign = []; S.locks = {}; S.unseated = []; }
+  const names = new Set(S.students.map(s => s.name));
+  let added = 0;
+  list.forEach(s => { if (!names.has(s.name)) { S.students.push(s); names.add(s.name); added++; } });
+  afterStudentsChange(); persist();
+  toast(`נוספו ${added} תלמידים` + (added < list.length ? ` (${list.length - added} כפולים דולגו)` : ''));
+  return added;
+}
+
+/* XLSX – קורא קטן מובנה (ללא ספריות חיצוניות): פותח את ה-ZIP וקורא את הגיליון הראשון */
+async function readXlsx(buf) {
+  const dv = new DataView(buf), u8 = new Uint8Array(buf);
+  let eocd = -1;
+  for (let i = u8.length - 22; i >= Math.max(0, u8.length - 66000); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  if (eocd < 0) throw new Error('zip');
+  const cnt = dv.getUint16(eocd + 10, true); let p = dv.getUint32(eocd + 16, true);
+  const files = {};
+  for (let k = 0; k < cnt; k++) {
+    const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true);
+    const nlen = dv.getUint16(p + 28, true), elen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true);
+    const off = dv.getUint32(p + 42, true);
+    const name = new TextDecoder().decode(u8.subarray(p + 46, p + 46 + nlen));
+    files[name] = { method, csize, off };
+    p += 46 + nlen + elen + clen;
+  }
+  async function get(name) {
+    const f = files[name]; if (!f) return null;
+    const ln = dv.getUint16(f.off + 26, true), le = dv.getUint16(f.off + 28, true);
+    const data = u8.subarray(f.off + 30 + ln + le, f.off + 30 + ln + le + f.csize);
+    if (f.method === 0) return new TextDecoder().decode(data);
+    const ds = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+    return await new Response(ds).text();
+  }
+  const xml = s => new DOMParser().parseFromString(s, 'application/xml');
+  const ssTxt = await get('xl/sharedStrings.xml');
+  const shared = ssTxt ? Array.from(xml(ssTxt).getElementsByTagName('si')).map(si => Array.from(si.getElementsByTagName('t')).map(t => t.textContent).join('')) : [];
+  const sheetName = Object.keys(files).filter(n => /^xl\/worksheets\/sheet\d+\.xml$/.test(n)).sort()[0];
+  const sh = xml(await get(sheetName));
+  const rows = [];
+  Array.from(sh.getElementsByTagName('row')).forEach(r => {
+    const cells = [];
+    Array.from(r.getElementsByTagName('c')).forEach(c => {
+      const ref = c.getAttribute('r') || ''; const col = ref.replace(/\d+/g, '');
+      let ci = 0; for (const ch of col) ci = ci * 26 + (ch.charCodeAt(0) - 64); ci = Math.max(0, ci - 1);
+      const t = c.getAttribute('t'); const v = c.getElementsByTagName('v')[0];
+      let val = '';
+      if (t === 's' && v) val = shared[+v.textContent] || '';
+      else if (t === 'inlineStr') val = Array.from(c.getElementsByTagName('t')).map(x => x.textContent).join('');
+      else if (v) val = v.textContent;
+      cells[ci] = val;
+    });
+    rows.push(Array.from(cells, x => x || ''));
+  });
+  return rows;
+}
+async function handleFile(file) {
+  if (!file) return;
+  try {
+    let rows;
+    if (/\.xlsx$/i.test(file.name)) {
+      if (typeof DecompressionStream === 'undefined') { showAlert('err', 'הדפדפן הזה לא קורא קובצי Excel. אפשר לשמור את הגיליון כ-CSV או להדביק את העמודות.'); return; }
+      rows = await readXlsx(await file.arrayBuffer());
+    } else {
+      const buf = await file.arrayBuffer();
+      let text = new TextDecoder('utf-8').decode(buf);
+      if (text.includes('\uFFFD')) { try { text = new TextDecoder('windows-1255').decode(buf); } catch (e) {} }
+      rows = splitText(text.replace(/^\uFEFF/, ''));
+    }
+    const list = rowsToStudents(rows);
+    let replace = false;
+    if (S.students.length && list.length) {
+      const ans = await ask({ title: 'ייבוא רשימה', text: `בקובץ ${list.length} שמות, וברשימה כבר יש ${S.students.length}. מה לעשות?`, ok: 'להחליף את הרשימה', cancel: 'להוסיף לרשימה' });
+      if (ans === null) return;
+      replace = ans === true;
+    }
+    addStudents(list, replace);
+  } catch (e) {
+    showAlert('err', 'לא הצלחתי לקרוא את הקובץ. אפשר לשמור אותו כ-CSV או להדביק את העמודות מהגיליון.');
+  }
+}
+
+/* ============================ מחולל מבנה הכיתה ============================ */
+/* יחידות: רוחב מושב = 1. y קטן = קרוב ללוח. */
+function buildRoom() {
+  const L = S.layout;
+  const seats = []; const units = []; const desks = [];
+  const R = clamp(+L.rows || 1, 1, 12), C = clamp(+L.cols || 1, 1, 12);
+  const Y0 = 2.3;
+  const add = (x, y, w, h, label, front) => { seats.push({ x, y, w, h, label, front }); return seats.length - 1; };
+  if (L.type === 'pairs') {
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+      const x = c * 2.5, y = Y0 + r * 1.3;
+      desks.push({ x: x - 0.06, y: y - 0.06, w: 2.06, h: 0.78 });
+      const colNo = c + 1;
+      const a = add(x + 1.0, y, 0.94, 0.66, `טור ${colNo}, שורה ${r + 1}, ימין`, r === 0);
+      const b = add(x, y, 0.94, 0.66, `טור ${colNo}, שורה ${r + 1}, שמאל`, r === 0);
+      units.push([a, b]);
+    }
+  } else if (L.type === 'rows') {
+    for (let r = 0; r < R; r++) {
+      let prev = null;
+      for (let c = 0; c < C; c++) {
+        const i = add(c * 1.12, Y0 + r * 1.3, 1.0, 0.66, `שורה ${r + 1}, מקום ${c + 1}`, r === 0);
+        if (prev !== null) units.push([prev, i]); prev = i;
+      }
+    }
+  } else if (L.type === 'groups') {
+    const g = clamp(+L.group || 4, 3, 6), hr = Math.ceil(g / 2);
+    let gi = 0;
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+      gi++;
+      const bx = c * 3.0, by = Y0 + r * (hr * 0.74 + 0.95);
+      desks.push({ x: bx - 0.08, y: by - 0.08, w: 2.06 + 0.1, h: hr * 0.74 - 0.08 + 0.16 });
+      const u = [];
+      for (let k = 0; k < g; k++) {
+        const rr = Math.floor(k / 2), cc = k % 2;
+        let x = bx + (cc === 0 ? 1.06 : 0);
+        if (g % 2 === 1 && k === g - 1) x = bx + 0.53;
+        u.push(add(x, by + rr * 0.74, 1.0, 0.66, `קבוצה ${gi}, מקום ${k + 1}`, r === 0));
+      }
+      units.push(u);
+    }
+  } else { // u – ח׳ (פרסה): שני צדדים ושורה אחורית, הפתח פונה ללוח
+    const g = 0.12, step = 0.82, sw = 1.0, sh = 0.66;
+    const ring = (side, back, left, right, oy, nameP) => {
+      const path = [];
+      for (let i = 0; i < side; i++) path.push(add(right, oy + i * step, sw, sh, `${nameP} – צד ימין, מקום ${i + 1}`, i < 2));
+      const by = oy + (side - 1) * step + 0.66 + 0.4;
+      const span = back * 1.06 - 0.06, x0 = left + sw + g + ((right - left - sw - 2 * g) - span) / 2;
+      for (let j = back - 1; j >= 0; j--) path.push(add(x0 + j * 1.06, by, sw, sh, `${nameP} – שורה אחורית, מקום ${back - j}`, false));
+      for (let i = side - 1; i >= 0; i--) path.push(add(left, oy + i * step, sw, sh, `${nameP} – צד שמאל, מקום ${i + 1}`, i < 2));
+      for (let k = 1; k < path.length; k++) units.push([path[k - 1], path[k]]);
+    };
+    const outerRight = sw + 2 * g + C * 1.06 - 0.06;
+    ring(R, C, 0, outerRight, Y0, L.double ? 'ח׳ חיצונית' : 'ח׳');
+    if (L.double && R > 1 && C > 3) ring(R - 1, C - 3, 1.55, outerRight - 1.55, Y0, 'ח׳ פנימית');
+  }
+  // גבולות
+  let maxX = 0, maxY = 0;
+  seats.forEach(s => { maxX = Math.max(maxX, s.x + s.w); maxY = Math.max(maxY, s.y + s.h); });
+  const W = Math.max(maxX, 5), H = maxY + 0.5;
+  // לוח, שולחן מורה, דלת (קואורדינטות "חדר": x ימינה, מבט התלמידים)
+  const board = { x: W * 0.2, y: 0.05, w: W * 0.6, h: 0.32 };
+  const tw = 1.9, th = 0.8;
+  const tx = L.teacher === 'right' ? W - tw : L.teacher === 'left' ? 0 : (W - tw) / 2;
+  const tdesk = { x: tx, y: 0.85, w: tw, h: th };
+  const dRight = L.door.endsWith('right'), dBack = L.door.startsWith('back');
+  const door = { x: dRight ? W + 0.25 : -0.6, y: dBack ? H - 1.4 : 0.35, w: 0.35, h: 1.2 };
+  // חישוב קירבה לדלת ולמורה
+  const n = seats.length;
+  const K = Math.max(3, Math.round(n * 0.18));
+  const cen = s => [s.x + s.w / 2, s.y + s.h / 2];
+  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const doorC = [dRight ? W : 0, door.y + door.h / 2];
+  const tC = [tdesk.x + tw / 2, tdesk.y + th / 2];
+  const rank = (pt) => seats.map((s, i) => [dist(cen(s), pt), i]).sort((a, b) => a[0] - b[0]);
+  const rd = rank(doorC), rt = rank(tC);
+  rd.forEach(([d, i], k) => seats[i].nearDoor = k < K || d <= rd[Math.min(K, n) - 1][0] + 0.01);
+  rt.forEach(([d, i], k) => seats[i].nearTeacher = k < K || d <= rt[Math.min(K, n) - 1][0] + 0.01);
+  const unitOf = new Array(n).fill(null).map(() => []);
+  units.forEach((u, ui) => u.forEach(i => unitOf[i].push(ui)));
+  // מטריצת "קרובים מדי" (לאילוץ "לא ליד")
+  const close = seats.map((s, i) => seats.map((t, j) => i !== j && (dist(cen(s), cen(t)) < 1.45 || unitOf[i].some(u => unitOf[j].includes(u)))));
+  const mate = seats.map((s, i) => seats.map((t, j) => i !== j && unitOf[i].some(u => unitOf[j].includes(u))));
+  ROOM = { seats, units, desks, W, H, board, tdesk, door, close, mate, maxSeatY: Math.max(...seats.map(s => s.y), 0) };
+  return ROOM;
+}
+
+/* ============================ פותר הסידור ============================ */
+function consText(c) {
+  const a = nameOf(c.a), b = nameOf(c.b);
+  return { apart: `${a} ו${b} – לא לשבת ליד`, near: `${a} ו${b} – לשבת ליד`, front: `${a} – שורה ראשונה`, door: `${a} – קרוב לדלת`, teacher: `${a} – קרוב לשולחן המורה` }[c.type];
+}
+function validConstraints() {
+  return S.constraints.filter(c => byId(c.a) && (!['apart', 'near'].includes(c.type) || byId(c.b)));
+}
+// pos: Map studentId -> seatIndex (או undefined אם לא הושב)
+function checkConstraint(c, pos) {
+  const pa = pos.get(c.a), pb = pos.get(c.b);
+  const seats = ROOM.seats;
+  switch (c.type) {
+    case 'apart': return pa === undefined || pb === undefined || !ROOM.close[pa][pb];
+    case 'near': return pa !== undefined && pb !== undefined && ROOM.mate[pa][pb];
+    case 'front': return pa !== undefined && seats[pa].front;
+    case 'door': return pa !== undefined && seats[pa].nearDoor;
+    case 'teacher': return pa !== undefined && seats[pa].nearTeacher;
+  }
+  return true;
+}
+function modeCost(arr, mode) {
+  if (mode === 'random') return 0;
+  let cost = 0;
+  for (const u of ROOM.units) {
+    const st = u.map(i => arr[i]).filter(Boolean).map(byId).filter(Boolean);
+    if (st.length < 2) continue;
+    if (mode === 'alt') {
+      const f = st.filter(s => s.gender === 'f').length, m = st.filter(s => s.gender === 'm').length;
+      if (f + m >= 2) cost += Math.max(0, Math.abs(f - m) - (st.length % 2));
+    } else {
+      for (let x = 0; x < st.length; x++) for (let y = x + 1; y < st.length; y++) {
+        const la = st[x].level, lb = st[y].level;
+        if (la === '' || lb === '' || la == null || lb == null) continue;
+        const d = Math.abs(la - lb);
+        cost += mode === 'mixed' ? (d === 0 ? 1.5 : d === 1 ? 0.5 : 0) : d;
+      }
+    }
+  }
+  return cost;
+}
+function totalCost(arr, unseated, cons, mode) {
+  const pos = new Map();
+  arr.forEach((id, i) => { if (id) pos.set(id, i); });
+  let cost = 0;
+  for (const c of cons) if (!checkConstraint(c, pos)) cost += 100;
+  cost += modeCost(arr, mode) * 3;
+  // מקומות ריקים – עדיף מאחור
+  const my = ROOM.maxSeatY || 1;
+  arr.forEach((id, i) => { if (!id) cost += (my - ROOM.seats[i].y) / my * 0.4; });
+  return cost;
+}
+function solve() {
+  const n = ROOM.seats.length;
+  const cons = validConstraints();
+  const fixed = new Map();
+  Object.entries(S.locks).forEach(([k, id]) => { k = +k; if (k < n && byId(id)) fixed.set(k, id); });
+  if (S.keepPlaced) S.assign.forEach((id, k) => { if (id && k < n && byId(id) && !fixed.has(k) && ![...fixed.values()].includes(id)) fixed.set(k, id); });
+  const lockedIds = new Set(fixed.values());
+  const freeSeats = []; for (let i = 0; i < n; i++) if (!fixed.has(i)) freeSeats.push(i);
+  let pool = S.students.map(s => s.id).filter(id => !lockedIds.has(id));
+  // אם יש יותר תלמידים ממקומות – מי שיש לו אילוצים קודם
+  const consCount = id => cons.filter(c => c.a === id || c.b === id).length;
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let extra = [];
+  if (pool.length > freeSeats.length) {
+    shuffle(pool);
+    pool.sort((a, b) => consCount(b) - consCount(a));
+    extra = pool.slice(freeSeats.length); pool = pool.slice(0, freeSeats.length);
+  }
+  let best = null, bestCost = Infinity;
+  const restarts = 8, iters = 2500;
+  for (let r = 0; r < restarts && bestCost > 0.0001; r++) {
+    const slots = shuffle(pool.concat(new Array(freeSeats.length - pool.length).fill(null)));
+    const arr = new Array(n).fill(null);
+    fixed.forEach((id, k) => arr[k] = id);
+    freeSeats.forEach((s, k) => arr[s] = slots[k]);
+    let cur = totalCost(arr, extra, cons, S.mode);
+    let T = 3;
+    for (let it = 0; it < iters && cur > 0.0001; it++) {
+      const a = freeSeats[Math.floor(Math.random() * freeSeats.length)], b = freeSeats[Math.floor(Math.random() * freeSeats.length)];
+      if (a === b || (!arr[a] && !arr[b])) continue;
+      [arr[a], arr[b]] = [arr[b], arr[a]];
+      const nc = totalCost(arr, extra, cons, S.mode);
+      if (nc <= cur || Math.random() < Math.exp((cur - nc) / T)) cur = nc; else [arr[a], arr[b]] = [arr[b], arr[a]];
+      T = Math.max(0.02, T * 0.997);
+    }
+    if (cur < bestCost) { bestCost = cur; best = arr.slice(); }
+    if (S.mode === 'random' && cons.length === 0) break;
+  }
+  S.assign = best || new Array(n).fill(null);
+  S.unseated = extra;
+}
+function evaluate() {
+  const pos = new Map();
+  S.assign.forEach((id, i) => { if (id) pos.set(id, i); });
+  const all = validConstraints();
+  const placedAll = S.students.every(s => pos.has(s.id)) || ROOM && pos.size >= ROOM.seats.length;
+  const cons = placedAll ? all : all.filter(c => pos.has(c.a) && (!c.b || pos.has(c.b)));
+  const failed = cons.filter(c => !checkConstraint(c, pos));
+  const badSeats = new Set();
+  failed.forEach(c => { [c.a, c.b].forEach(id => { if (pos.has(id)) badSeats.add(pos.get(id)); }); });
+  return { total: cons.length, failed, badSeats, pending: all.length - cons.length };
+}
+function precheck() {
+  const msgs = [];
+  if (!ROOM) return msgs;
+  const cons = validConstraints();
+  const fronts = ROOM.seats.filter(s => s.front).length;
+  const needFront = new Set(cons.filter(c => c.type === 'front').map(c => c.a)).size;
+  if (needFront > fronts) msgs.push(`${needFront} תלמידים צריכים שורה ראשונה, ויש בה רק ${fronts} מקומות.`);
+  const nearCount = {};
+  cons.filter(c => c.type === 'near').forEach(c => { nearCount[c.a] = (nearCount[c.a] || 0) + 1; nearCount[c.b] = (nearCount[c.b] || 0) + 1; });
+  const maxMates = Math.max(...ROOM.seats.map((s, i) => ROOM.mate[i].filter(Boolean).length), 0);
+  Object.entries(nearCount).forEach(([id, k]) => { if (k > maxMates) msgs.push(`${nameOf(id)} צריך/ה לשבת ליד ${k} תלמידים, ובמבנה הזה יש לכל היותר ${maxMates} שכנים צמודים.`); });
+  return msgs;
+}
+
+/* ============================ התראות ============================ */
+function showAlert(kind, html, sticky) {
+  const box = $('#alerts');
+  const ic = { ok: 'check', err: 'alert', warn: 'alert', info: 'info' }[kind];
+  const el = document.createElement('div');
+  el.className = 'alert ' + kind; el.setAttribute('role', kind === 'err' ? 'alert' : 'status');
+  el.innerHTML = icon(ic) + `<div style="flex:1">${html}</div><button class="icon-btn no-print" aria-label="סגירה" style="width:28px;height:28px;margin:-4px">✕</button>`;
+  el.querySelector('button').onclick = () => el.remove();
+  if (!sticky) { box.querySelectorAll('.alert.transient').forEach(x => x.remove()); el.classList.add('transient'); }
+  box.prepend(el);
+  return el;
+}
+function renderStatus() {
+  const box = $('#alerts');
+  box.querySelectorAll('.alert.status').forEach(x => x.remove());
+  const add = (kind, html) => { const el = showAlert(kind, html, true); el.classList.add('status'); box.append(el); };
+  const n = ROOM ? ROOM.seats.length : 0, k = S.students.length;
+  if (k > n && n > 0) add('warn', `<b>יש ${k} תלמידים ורק ${n} מקומות.</b> ${S.unseated.length ? S.unseated.length + ' תלמידים לא שובצו (מחכים ב"עוד לא שובצו" מעל המפה). ' : ''}אפשר להוסיף שורות או טורים בלשונית "מבנה הכיתה", או ללחוץ על "התאמת המבנה למספר התלמידים".`);
+  const pre = precheck();
+  if (pre.length) add('err', `<b>יש אילוצים שאי אפשר לקיים במבנה הנוכחי:</b><ul>${pre.map(m => `<li>${esc(m)}</li>`).join('')}</ul>`);
+  if (lastReport && S.assign.some(Boolean)) {
+    const ev = evaluate();
+    const free = ROOM.seats.length - S.assign.filter(Boolean).length, un = S.unseated.length;
+    if (ev.failed.length) add('err', `<b>${ev.failed.length} מתוך ${ev.total} אילוצים לא מתקיימים בסידור הזה:</b><ul>${ev.failed.map(c => `<li>${esc(consText(c))}</li>`).join('')}</ul>אפשר לנסות "סידור אוטומטי" שוב, לשנות את מבנה הכיתה, או להחליף ידנית.`);
+    else if (un && free > 0) add('info', `<b>שובצו ${k - un} מתוך ${k} תלמידים.</b> עוד ${un} מחכים ברשימה שמעל המפה.${ev.total ? ` ${ev.total} אילוצים נבדקו ומתקיימים.` : ''}`);
+    else if (ev.total) add('ok', `<b>הסידור מוכן.</b> כל ${ev.total} האילוצים מתקיימים.`);
+    else add('ok', `<b>הסידור מוכן.</b> אפשר לגרור תלמידים כדי להחליף מקומות.`);
+  }
+}
+
+/* ============================ ציור המפה ============================ */
+function computeUnit(forPrint) {
+  const roomW = ROOM.W + 1.6, roomH = ROOM.H;  // שוליים לדלת
+  if (forPrint) return Math.min(1000 / roomW, 470 / roomH);
+  const avail = $('#chartScroll').clientWidth - 30;
+  const minU = window.innerWidth < 600 ? 46 : 60;
+  return clamp(avail / roomW, minU, 120);
+}
+function renderChart(forPrint) {
+  const chart = $('#chart');
+  if (!ROOM) buildRoom();
+  if (ROOM) S.unseated = unplacedIds();
+  chart.classList.toggle('picking', !!pickId);
+  const ev = evaluate();
+  if (!S.students.length) {
+    chart.style.width = ''; chart.style.height = '';
+    chart.innerHTML = `<div class="empty">${icon('empty')}<p style="font-size:17px;color:var(--navy);margin:4px 0">עדיין אין תלמידים ברשימה</p><p style="margin:0 0 12px">אפשר להדביק רשימה מאקסל, להעלות קובץ, להוסיף ידנית – או להתחיל עם נתוני דוגמה.</p><div class="row" style="justify-content:center"><button class="btn" id="emptySample">${icon('users')}טעינת נתוני דוגמה</button><button class="btn sec" id="emptyAdd">${icon('plus')}הוספת תלמידים</button></div></div>`;
+    $('#emptySample').onclick = loadSample;
+    $('#emptyAdd').onclick = () => { selectTab('students'); $('#addName').focus(); };
+    $('#legend').innerHTML = ''; $('#unseated').innerHTML = ''; $('#scrollHint').hidden = true; pickId = null; renderTray(); renderSelBar();
+    renderNotes();
+    return;
+  }
+  const u = computeUnit(forPrint);
+  const ox = 0.8; // שוליים לדלת
+  const fullW = (ROOM.W + 1.6) * u, fullH = ROOM.H * u;
+  const flip = S.view === 'teacher';
+  const P = (o) => {
+    let x = (o.x + ox) * u, y = o.y * u, w = o.w * u, h = o.h * u;
+    if (flip) { x = fullW - x - w; y = fullH - y - h; }
+    return `left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${w.toFixed(1)}px;height:${h.toFixed(1)}px`;
+  };
+  const fs = clamp(u * 0.2, 11.5, 22);
+  let h = '';
+  ROOM.desks.forEach(d => h += `<div class="deskbg" style="${P(d)}"></div>`);
+  h += `<div class="board" style="${P(ROOM.board)};font-size:${clamp(u * .16, 10, 16)}px">לוח</div>`;
+  h += `<div class="tdesk" style="${P(ROOM.tdesk)};font-size:${clamp(u * .16, 10, 16)}px">${icon('desk')}<span>שולחן המורה</span></div>`;
+  h += `<div class="door" style="${P(ROOM.door)};font-size:${clamp(u * .15, 10, 14)}px"><span class="dbar" style="height:${(ROOM.door.h * u * .7).toFixed(0)}px"></span>דלת</div>`;
+  ROOM.seats.forEach((s, i) => {
+    const id = S.assign[i]; const st = id && byId(id);
+    const locked = S.locks[i] && S.locks[i] === id && st;
+    const cls = ['seat'];
+    if (!st) cls.push('empty'); else if (S.showMeta && st.gender) cls.push(st.gender);
+    if (locked) cls.push('locked');
+    if (ev.badSeats.has(i)) cls.push('violate');
+    if (selSeat === i) cls.push('sel');
+    const compact = u < 66;
+    const shown = st ? (compact ? shortName(st.name) : st.name) : '';
+    const meta = st && S.showMeta && !compact ? `<span class="meta">${st.gender ? GEN[st.gender] : ''}${st.gender && st.level ? ' · ' : ''}${st.level ? 'רמה ' + st.level : ''}</span>` : '';
+    const lk = st ? `<button class="lk" type="button" data-lock="${i}" aria-label="${locked ? 'ביטול נעילה' : 'נעילה במקום'} – ${esc(st.name)}" title="${locked ? 'ביטול נעילה' : 'נעילה במקום'}">${icon(locked ? 'lock' : 'unlock')}</button>` : '';
+    const bad = ev.badSeats.has(i) ? `<span class="bad" title="אילוץ לא מתקיים">${icon('alert')}</span>` : '';
+    h += `<div class="${cls.join(' ')}" data-i="${i}" tabindex="0" role="button" aria-label="${esc(s.label)}: ${st ? esc(st.name) : 'מקום פנוי'}" style="${P(s)};font-size:${fs.toFixed(1)}px">${lk}${bad}<span class="nm">${st ? esc(shown) : 'פנוי'}</span>${meta}</div>`;
+  });
+  chart.style.width = fullW + 'px'; chart.style.height = fullH + 'px';
+  chart.innerHTML = h;
+  renderTray(); renderSelBar();
+  const sc = $('#chartScroll');
+  $('#scrollHint').hidden = !(sc.scrollWidth > sc.clientWidth + 4);
+  // מקרא
+  let lg = '';
+  if (S.showMeta) lg += `<span><span class="sw" style="background:#FCEFFF;border-color:#E3B4F0"></span>בת</span><span><span class="sw" style="background:#EAF7FF;border-color:#9FD6F2"></span>בן</span>`;
+  lg += `<span><span class="sw" style="border:2px solid var(--cta)"></span>נעול במקום</span>`;
+  if (ev.failed.length) lg += `<span style="color:#A3281B">${icon('alert')} אילוץ לא מתקיים</span>`;
+  lg += `<span>${S.assign.filter(Boolean).length} תלמידים · ${ROOM.seats.length} מקומות</span>`;
+  $('#legend').innerHTML = lg;
+  const un = S.unseated.filter(byId);
+  $('#unseated').innerHTML = un.length ? `<div class="alert warn print-only">${icon('alert')}<div><b>לא שובצו:</b> ${un.map(id => esc(nameOf(id))).join(', ')}</div></div>` : '';
+  renderNotes();
+}
+function shortName(n) {
+  const p = String(n).trim().split(/\s+/);
+  return p.length > 1 ? p[0] + ' ' + p[p.length - 1][0] + '׳' : p[0];
+}
+function renderSelBar() {
+  const bar = $('#selBar');
+  if (pickId && byId(pickId)) {
+    bar.hidden = false;
+    bar.innerHTML = `<span class="t"><b>${esc(nameOf(pickId))}</b> נבחר/ה מהרשימה. לחיצה על מושב במפה תושיב אותו/ה שם.</span>
+   <button class="btn ghost sm" type="button" data-selcancel="1">ביטול בחירה</button>`;
+    return;
+  }
+  const id = selSeat !== null ? S.assign[selSeat] : null;
+  if (!id) { bar.hidden = true; bar.innerHTML = ''; return; }
+  const locked = S.locks[selSeat] === id;
+  bar.hidden = false;
+  const st = byId(id);
+  const info = [st.gender ? GEN[st.gender] : '', st.level ? 'רמה ' + st.level : ''].filter(Boolean).join(' · ');
+  bar.innerHTML = `<span class="t"><b>${esc(st.name)}</b>${info ? ' (' + info + ')' : ''} נבחר/ה. לחיצה על מושב אחר תחליף ביניהם.</span>
+   <button class="btn sec sm" type="button" data-sellock="1">${icon(locked ? 'unlock' : 'lock')}${locked ? 'ביטול נעילה' : 'נעילה במקום'}</button>
+   <button class="btn sec sm" type="button" data-selout="1">${icon('undo')}הוצאה מהמושב</button>
+   <button class="btn ghost sm" type="button" data-selcancel="1">ביטול בחירה</button>`;
+}
+/* ============================ סידור ידני ============================ */
+function unplacedIds() {
+  const placed = new Set(S.assign.filter(Boolean));
+  return S.students.map(s => s.id).filter(id => !placed.has(id));
+}
+const isLocked = i => !!(S.assign[i] && S.locks[i] === S.assign[i]);
+function renderTray() {
+  const tray = $('#tray');
+  if (!S.students.length || !ROOM) { tray.hidden = true; tray.innerHTML = ''; return; }
+  tray.hidden = false;
+  const un = unplacedIds();
+  const free = ROOM.seats.length - S.assign.filter(Boolean).length;
+  const touch = document.body.classList.contains('touch-ui');
+  const sub = un.length
+    ? (touch ? 'לחיצה ארוכה על שם וגרירה למושב, או לחיצה על השם ואז על המושב' : 'גוררים שם למושב במפה, או לוחצים על השם ואז על המושב')
+    : 'כולם במפה. כדי להוציא תלמיד/ה ממושב: גוררים לכאן.';
+  let h = `<div class="tray-head"><h3>${icon('users')}תלמידים שעוד לא שובצו <span class="cnt">${un.length}</span></h3><span class="sub">${sub}</span>`
+    + `<button class="btn ghost sm" type="button" data-undo="1" ${undoStack.length ? '' : 'disabled'} title="ביטול הפעולה האחרונה במפה">${icon('undo')}ביטול פעולה</button></div>`;
+  if (un.length) {
+    h += `<div class="tray-chips">` + un.map(id => {
+      const st = byId(id);
+      const cls = ['schip']; if (S.showMeta && st.gender) cls.push(st.gender); if (pickId === id) cls.push('sel');
+      const lv = S.showMeta && st.level ? `<span class="lv">${st.level}</span>` : '';
+      return `<button type="button" class="${cls.join(' ')}" data-sid="${id}" aria-pressed="${pickId === id}" aria-label="${esc(st.name)} – לא שובץ/ה">${esc(st.name)}${lv}</button>`;
+    }).join('') + `</div>`;
+    if (free <= 0) h += `<div class="tray-note">אין מקומות פנויים במפה. אפשר לגרור שם למושב תפוס (מי שיושב שם יחזור לרשימה), או להוסיף מקומות בלשונית "מבנה הכיתה".</div>`;
+  }
+  tray.innerHTML = h;
+}
+function pushUndo() {
+  undoStack.push(JSON.stringify({ n: S.assign.length, assign: S.assign, locks: S.locks }));
+  if (undoStack.length > 40) undoStack.shift();
+}
+function undoMove() {
+  const raw = undoStack.pop();
+  if (!raw) { toast('אין פעולה לביטול'); return; }
+  const u = JSON.parse(raw);
+  if (!ROOM || u.n !== ROOM.seats.length) { undoStack.length = 0; renderTray(); toast('מבנה הכיתה השתנה, אי אפשר לבטל'); return; }
+  S.assign = u.assign; S.locks = u.locks; selSeat = null; pickId = null;
+  lastReport = S.assign.some(Boolean) ? true : null;
+  renderChart(); renderCons(); renderStatus(); persist(); toast('הפעולה האחרונה בוטלה');
+}
+function placeStudent(id, i) {
+  if (!ROOM || !byId(id) || i === null || i === undefined || i >= ROOM.seats.length) return false;
+  if (isLocked(i)) { toast(`המושב של ${nameOf(S.assign[i])} נעול. אפשר לבטל את הנעילה בלחיצה על המנעול.`); return false; }
+  const from = S.assign.indexOf(id);
+  if (from === i) { pickId = null; renderChart(); return false; }
+  pushUndo();
+  const prev = S.assign[i];
+  if (from >= 0) S.assign[from] = prev || null;
+  S.assign[i] = id;
+  if (S.locks[i] && S.locks[i] !== id) delete S.locks[i];
+  pickId = null; selSeat = null; lastReport = true;
+  renderChart(); renderStatus(); persist();
+  toast(prev && from < 0 ? `${nameOf(id)} במקום, ו${nameOf(prev)} חזר/ה לרשימה` : `${nameOf(id)} שובץ/ה במקום`);
+  return true;
+}
+function unseatSeat(i) {
+  const id = S.assign[i]; if (!id) return;
+  pushUndo();
+  S.assign[i] = null; delete S.locks[i];
+  selSeat = null; pickId = null; lastReport = S.assign.some(Boolean) ? true : null;
+  renderChart(); renderCons(); renderStatus(); persist();
+  toast(`${nameOf(id)} חזר/ה לרשימה`);
+}
+function chipTap(id) {
+  if (selSeat !== null && !isLocked(selSeat)) { const i = selSeat; selSeat = null; placeStudent(id, i); return; }
+  selSeat = null;
+  pickId = pickId === id ? null : id;
+  renderChart();
+  const c = $(`#tray [data-sid="${id}"]`); c && c.focus({ preventScroll: true });
+}
+function toggleLock(i) {
+  if (S.locks[i] && S.locks[i] === S.assign[i]) { delete S.locks[i]; toast('הנעילה בוטלה'); }
+  else if (S.assign[i]) { S.locks[i] = S.assign[i]; toast(`המקום של ${nameOf(S.assign[i])} נעול – גם בסידור הבא`); }
+  if (selSeat === i) selSeat = null;
+  renderChart(); renderCons(); persist();
+}
+function renderNotes() {
+  $('#notesOut').textContent = S.notes.trim();
+  const d = new Date();
+  $('#dateOut').textContent = d.toLocaleDateString('he-IL');
+  const LN = { pairs: 'טורים של זוגות', u: 'ח׳', groups: 'קבוצות', rows: 'שורות בודדות' }[S.layout.type];
+  const MN = { random: 'אקראי', alt: 'בן-בת לסירוגין', mixed: 'ערבוב רמות', similar: 'רמות דומות' }[S.mode];
+  $('#printTitle').textContent = `סידור ישיבה · ${LN} · ${MN} · ${S.view === 'teacher' ? 'מבט המורה (הלוח למטה)' : 'מבט התלמידים (הלוח למעלה)'}`;
+}
+
+/* ============================ רשימת תלמידים ============================ */
+function renderStudents() {
+  const k = S.students.length;
+  const f = S.students.filter(s => s.gender === 'f').length, m = S.students.filter(s => s.gender === 'm').length;
+  const lv = [1, 2, 3].map(l => S.students.filter(s => +s.level === l).length);
+  $('#counts').innerHTML = k ? `<span class="chip">${k} תלמידים</span><span class="chip f">${f} בנות</span><span class="chip m">${m} בנים</span><span class="chip">רמות: ${lv[0]} / ${lv[1]} / ${lv[2]}</span>` : '';
+  $('#bStudents').textContent = k; $('#listCount').textContent = k ? `(${k})` : '';
+  const box = $('#studentList');
+  if (!k) { box.innerHTML = `<div class="empty" style="border:1px dashed var(--g2);border-radius:10px">${icon('users')}<div>הרשימה ריקה</div></div>`; return; }
+  box.innerHTML = `<ul class="slist"><li class="hd"><span>שם</span><span>מין</span><span>רמה</span><span></span></li>` + S.students.map(s => `
+   <li data-id="${s.id}">
+    <input type="text" value="${esc(s.name)}" data-f="name" aria-label="שם" maxlength="40">
+    <select data-f="gender" aria-label="מין"><option value="" ${!s.gender ? 'selected' : ''}>—</option><option value="f" ${s.gender === 'f' ? 'selected' : ''}>בת</option><option value="m" ${s.gender === 'm' ? 'selected' : ''}>בן</option></select>
+    <select data-f="level" aria-label="רמה"><option value="" ${!s.level ? 'selected' : ''}>—</option>${[1, 2, 3].map(l => `<option value="${l}" ${+s.level === l ? 'selected' : ''}>${l}</option>`).join('')}</select>
+    <button class="icon-btn del" data-del="${s.id}" aria-label="מחיקת ${esc(s.name)}" title="מחיקה">${icon('trash')}</button>
+   </li>`).join('') + '</ul>';
+}
+function afterStudentsChange() {
+  const ids = new Set(S.students.map(s => s.id));
+  S.assign = S.assign.map(id => (id && ids.has(id) ? id : null));
+  Object.keys(S.locks).forEach(k => { if (!ids.has(S.locks[k])) delete S.locks[k]; });
+  S.constraints = S.constraints.filter(c => ids.has(c.a) && (!c.b || ids.has(c.b)));
+  S.unseated = S.unseated.filter(id => ids.has(id));
+  // תלמידים חדשים שעדיין לא במפה מחכים ברשימת "עוד לא שובצו"
+  if (pickId && !ids.has(pickId)) pickId = null;
+  renderAll();
+}
+
+/* ============================ אילוצים ============================ */
+function renderConsForm() {
+  const opts = '<option value="">בחירה…</option>' + S.students.slice().sort((a, b) => a.name.localeCompare(b.name, 'he')).map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  const a = $('#cA').value, b = $('#cB').value;
+  $('#cA').innerHTML = opts; $('#cB').innerHTML = opts;
+  $('#cA').value = byId(a) ? a : ''; $('#cB').value = byId(b) ? b : '';
+  $('#wrapB').hidden = !['apart', 'near'].includes($('#cType').value);
+}
+function renderCons() {
+  const list = $('#consList');
+  const T = { apart: ['apart', 'לא ליד'], near: ['near', 'ליד'], front: ['front', 'שורה ראשונה'], door: ['door', 'ליד הדלת'], teacher: ['teacher', 'ליד המורה'] };
+  const lockN = Object.keys(S.locks).filter(k => S.assign[k] === S.locks[k]).length;
+  list.innerHTML = S.constraints.map(c => {
+    const [cl, lab] = T[c.type];
+    const who = ['apart', 'near'].includes(c.type) ? `${esc(nameOf(c.a))} · ${esc(nameOf(c.b))}` : esc(nameOf(c.a));
+    return `<li><span class="tag ${cl}">${lab}</span><span class="t">${who}</span><button class="icon-btn del" data-cdel="${c.id}" aria-label="מחיקת האילוץ" title="מחיקה">${icon('trash')}</button></li>`;
+  }).join('') + (lockN ? `<li><span class="tag lock">נעולים</span><span class="t">${lockN} תלמידים נעולים במקום</span><button class="icon-btn" data-unlockall="1" aria-label="ביטול כל הנעילות" title="ביטול כל הנעילות">${icon('unlock')}</button></li>` : '');
+  if (!S.constraints.length && !lockN) list.innerHTML = `<li class="muted" style="background:none;padding:4px 0">עדיין לא הוגדרו אילוצים.</li>`;
+  $('#bCons').textContent = S.constraints.length;
+  $('#notesIn').value !== S.notes && document.activeElement !== $('#notesIn') && ($('#notesIn').value = S.notes);
+}
+
+/* ============================ גרסאות ============================ */
+function snapshot() { return JSON.parse(JSON.stringify({ layout: S.layout, assign: S.assign, locks: S.locks, unseated: S.unseated, mode: S.mode, notes: S.notes, className: S.className, view: S.view })); }
+function saveVersion(name) {
+  if (!S.assign.some(Boolean)) { toast('עדיין אין סידור לשמירה'); return; }
+  name = (name || '').trim() || `סידור ${S.versions.length + 1}`;
+  S.versions.unshift({ id: uid('v'), name: name.slice(0, 50), date: new Date().toISOString(), data: snapshot() });
+  renderVersions(); persist(); toast(`הגרסה "${name}" נשמרה`);
+}
+function loadVersion(id) {
+  const v = S.versions.find(x => x.id === id); if (!v) return;
+  Object.assign(S, JSON.parse(JSON.stringify(v.data)));
+  ROOM = null; buildRoom();
+  S.assign = S.assign.slice(0, ROOM.seats.length).map(x => (x && byId(x) ? x : null));
+  while (S.assign.length < ROOM.seats.length) S.assign.push(null);
+  lastReport = true; selSeat = null;
+  afterStudentsChange(); syncControls(); persist();
+  toast(`נטענה הגרסה "${v.name}"`);
+}
+function renderVersions() {
+  const list = $('#verList');
+  $('#bVers').textContent = S.versions.length;
+  list.innerHTML = S.versions.length ? S.versions.map(v => {
+    const d = new Date(v.date);
+    return `<li><div class="t"><b>${esc(v.name)}</b><span>${d.toLocaleDateString('he-IL')} ${d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</span></div>
+     <button class="btn sec sm" data-vload="${v.id}">טעינה</button>
+     <button class="icon-btn del" data-vdel="${v.id}" aria-label="מחיקת הגרסה ${esc(v.name)}" title="מחיקה">${icon('trash')}</button></li>`;
+  }).join('') : `<li class="muted" style="background:none;padding:4px 0">עדיין לא נשמרו גרסאות. אחרי סידור אפשר לשמור אותו כאן, ולחזור אליו מתי שרוצים.</li>`;
+}
+
+/* ============================ פעולות ============================ */
+function placeInOrder() {
+  // שיבוץ ראשוני לפי סדר הרשימה (אחרי שינוי מבנה)
+  // מי שהיה במפה נשאר במפה; אם המפה הייתה מלאה – גם מי שחיכה נכנס למקומות החדשים
+  const seated = S.assign.filter(Boolean);
+  const wasFull = S.assign.length && S.assign.every(Boolean);
+  const all = wasFull ? seated.concat(unplacedIds()) : seated;
+  S.assign = new Array(ROOM.seats.length).fill(null); S.unseated = [];
+  all.forEach((id, k) => { if (k < ROOM.seats.length) S.assign[k] = id; else S.unseated.push(id); });
+}
+function layoutChanged() {
+  const hadArrangement = S.assign.some(Boolean);
+  ROOM = null; buildRoom(); S.locks = {}; selSeat = null; pickId = null; undoStack.length = 0;
+  if (hadArrangement) placeInOrder();
+  renderAll();
+}
+async function generate() {
+  if (busy) return;
+  if (!S.students.length) { showAlert('warn', 'אין תלמידים ברשימה. אפשר לטעון נתוני דוגמה או להוסיף תלמידים.'); return; }
+  busy = true;
+  const btn = $('#btnGen'); btn.disabled = true; btn.querySelector('span').textContent = 'מסדר…';
+  $('#app').classList.add('busy');
+  await new Promise(r => setTimeout(r, 30));
+  try {
+    if (S.assign.some(Boolean)) pushUndo();
+    buildRoom(); selSeat = null; pickId = null;
+    $$('#alerts .alert.transient').forEach(x => x.remove());
+    solve(); lastReport = true;
+    renderAll(); persist();
+  } finally {
+    setTimeout(() => { busy = false; btn.disabled = false; btn.querySelector('span').textContent = 'סידור אוטומטי'; $('#app').classList.remove('busy'); }, 350);
+  }
+}
+function swapSeats(i, j) {
+  if (i === j) return;
+  if (S.locks[i] && S.locks[i] === S.assign[i] || S.locks[j] && S.locks[j] === S.assign[j]) { toast('אחד המושבים נעול. אפשר לבטל את הנעילה בלחיצה על המנעול.'); return; }
+  pushUndo();
+  [S.assign[i], S.assign[j]] = [S.assign[j], S.assign[i]];
+  lastReport = true;
+  renderChart(); renderStatus(); persist();
+}
+function seatTap(i) {
+  if (pickId) { placeStudent(pickId, i); return; }
+  if (selSeat === null) {
+    if (!S.assign[i]) { if (unplacedIds().length) toast('בוחרים שם מהרשימה "עוד לא שובצו", ואז לוחצים על המושב'); return; }
+    selSeat = i; renderChart(); return;
+  }
+  if (selSeat === i) { selSeat = null; renderChart(); return; }
+  const a = selSeat; selSeat = null; swapSeats(a, i);
+}
+async function loadSample() {
+  if (S.students.length) {
+    const ok = await ask({ title: 'טעינת נתוני דוגמה', text: 'הרשימה הנוכחית, האילוצים והסידור יוחלפו ב-37 תלמידים בדויים. להמשיך?', ok: 'טעינה' });
+    if (!ok) return;
+  }
+  S.students = DataBridge.getSampleStudents();
+  S.constraints = []; S.assign = []; S.locks = {}; S.unseated = []; lastReport = null;
+  fitLayout(); ROOM = null; buildRoom();
+  renderAll(); persist();
+  toast('נטענו 37 תלמידים לדוגמה (שמות בדויים)');
+}
+function fitLayout() {
+  const k = Math.max(S.students.length, 1), L = S.layout;
+  if (L.type === 'pairs') { L.cols = clamp(+L.cols || 3, 1, 6); L.rows = clamp(Math.ceil(k / (2 * L.cols)), 1, 12); }
+  else if (L.type === 'rows') { L.cols = clamp(+L.cols || 6, 1, 12); L.rows = clamp(Math.ceil(k / L.cols), 1, 12); }
+  else if (L.type === 'groups') { const g = +L.group; const ng = Math.ceil(k / g); L.cols = clamp(Math.min(+L.cols || 3, ng), 1, 6); L.rows = clamp(Math.ceil(ng / L.cols), 1, 12); }
+  else {
+    // ח׳: מוצאים צלעות קטנות ככל האפשר שמכילות את כולם
+    let best = null;
+    for (const dbl of [false, true]) for (let r = 2; r <= 12; r++) for (let c = 2; c <= 12; c++) {
+      let n = 2 * r + c; if (dbl) { if (c < 4) continue; n += 2 * (r - 1) + (c - 3); }
+      if (n < k) continue;
+      const score = (n - k) + (dbl ? 1 : 0) + Math.abs(c - 1.6 * r) * 0.5 + Math.max(0, r - 6) * 1.2 + Math.max(0, c - 10) * 0.8;
+      if (!best || score < best.s) best = { s: score, r, c, dbl };
+    }
+    if (best) { L.rows = best.r; L.cols = best.c; L.double = best.dbl; }
+  }
+  syncControls(); layoutChanged();
+  toast(`המבנה הותאם: ${ROOM.seats.length} מקומות ל-${S.students.length} תלמידים`);
+}
+function exportCsv() {
+  if (!S.assign.some(Boolean)) { toast('עדיין אין סידור לייצוא'); return; }
+  const rows = [['שם', 'מין', 'רמה', 'מקום', 'נעול']];
+  ROOM.seats.forEach((s, i) => { const st = byId(S.assign[i]); rows.push([st ? st.name : '(פנוי)', st && st.gender ? GEN[st.gender] : '', st && st.level ? st.level : '', s.label, S.locks[i] && st && S.locks[i] === st.id ? 'כן' : '']); });
+  S.unseated.filter(byId).forEach(id => { const st = byId(id); rows.push([st.name, GEN[st.gender] || '', st.level || '', 'לא שובץ/ה', '']); });
+  if (S.notes.trim()) { rows.push([]); rows.push(['הערות', S.notes.trim()]); }
+  const csv = '\uFEFF' + rows.map(r => r.map(c => { c = String(c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `סידור-ישיבה${S.className ? '-' + S.className.replace(/[\\/:*?"<>|]/g, '') : ''}.csv`;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  toast('קובץ CSV ירד למכשיר');
+}
+let printing = false;
+function doPrint() {
+  if (printing) return;
+  if (!S.students.length) { toast('אין עדיין מה להדפיס'); return; }
+  printing = true;
+  renderChart(true);
+  setTimeout(() => { window.print(); setTimeout(() => { printing = false; renderChart(); }, 500); }, 60);
+}
+window.addEventListener('beforeprint', () => { if (S.students.length && ROOM) renderChart(true); });
+window.addEventListener('afterprint', () => { if (ROOM) renderChart(); });
+
+/* ============================ גרירה (עכבר + מגע) ============================ */
+let drag = null, ghost = null, lastDragEnd = 0, scrollRaf = 0;
+function seatAt(x, y) {
+  if (ghost) ghost.style.display = 'none';
+  const el = document.elementFromPoint(x, y);
+  if (ghost) ghost.style.display = '';
+  const s = el && el.closest && el.closest('#chart .seat');
+  return s ? +s.dataset.i : null;
+}
+function overTray(x, y) {
+  if (ghost) ghost.style.display = 'none';
+  const el = document.elementFromPoint(x, y);
+  if (ghost) ghost.style.display = '';
+  return !!(el && el.closest && el.closest('#tray'));
+}
+function dragName() { return drag.kind === 'chip' ? nameOf(drag.id) : nameOf(S.assign[drag.i]); }
+function startDrag() {
+  if (!drag) return;
+  drag.started = true;
+  ghost = document.createElement('div'); ghost.className = 'drag-ghost'; ghost.textContent = dragName();
+  document.body.appendChild(ghost); moveGhost(drag.x, drag.y);
+  drag.el.classList.add('dragging');
+  if (drag.kind === 'chip') { pickId = null; $$('#tray .schip.sel').forEach(e => e.classList.remove('sel')); }
+  if (navigator.vibrate && drag.type === 'touch') try { navigator.vibrate(15); } catch (e) {}
+}
+function moveGhost(x, y) {
+  if (!ghost) return;
+  ghost.style.left = x + 'px'; ghost.style.top = y + 'px';
+  $$('#chart .seat.over').forEach(e => e.classList.remove('over'));
+  const t = seatAt(x, y);
+  const tray = $('#tray');
+  const toTray = drag.kind === 'seat' && t === null && overTray(x, y);
+  tray.classList.toggle('over', toTray);
+  const bad = t !== null && t !== drag.i && isLocked(t);
+  ghost.classList.toggle('nodrop', bad);
+  if (t !== null && t !== drag.i && !bad) { const e = $(`#chart .seat[data-i="${t}"]`); e && e.classList.add('over'); }
+}
+// גלילה אוטומטית כשגוררים ליד קצה המסך
+function autoScroll() {
+  scrollRaf = 0;
+  if (!drag || !drag.started) return;
+  const edge = 44, y = drag.y, x = drag.x, H = window.innerHeight;
+  let vy = 0;
+  if (y < edge) vy = -Math.ceil((edge - y) / edge * 12); else if (y > H - edge) vy = Math.ceil((y - (H - edge)) / edge * 12);
+  let moved = false;
+  if (vy) { const before = window.scrollY; window.scrollBy(0, vy); moved = window.scrollY !== before; }
+  const sc = $('#chartScroll'), r = sc.getBoundingClientRect();
+  if (sc.scrollWidth > sc.clientWidth && y > r.top && y < r.bottom) {
+    let vx = 0;
+    if (x < r.left + 36) vx = -8; else if (x > r.right - 36) vx = 8;
+    if (vx) { const b0 = sc.scrollLeft; sc.scrollLeft += vx; moved = moved || sc.scrollLeft !== b0; }
+  }
+  if (moved) moveGhost(drag.x, drag.y);
+  if (vy || moved) scrollRaf = requestAnimationFrame(autoScroll);
+}
+function endDrag() {
+  if (drag && drag.timer) clearTimeout(drag.timer);
+  if (scrollRaf) cancelAnimationFrame(scrollRaf); scrollRaf = 0;
+  if (ghost) ghost.remove(); ghost = null;
+  $$('#chart .seat.over,#chart .seat.dragging,#tray .schip.dragging').forEach(e => e.classList.remove('over', 'dragging'));
+  const tray = $('#tray'); tray && tray.classList.remove('over');
+  drag = null;
+}
+function beginPointer(e, d) {
+  drag = Object.assign(d, { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, pid: e.pointerId, type: e.pointerType, started: false });
+  if (e.pointerType === 'touch') drag.timer = setTimeout(() => { if (drag && !drag.started) startDrag(); }, 260);
+}
+function initDrag() {
+  const chart = $('#chart'), tray = $('#tray');
+  chart.addEventListener('pointerdown', e => {
+    if (e.button && e.button !== 0) return;
+    const seat = e.target.closest('.seat'); if (!seat || e.target.closest('.lk')) return;
+    const i = +seat.dataset.i; if (!S.assign[i]) return;
+    if (isLocked(i)) return;
+    beginPointer(e, { kind: 'seat', i, el: seat });
+  });
+  tray.addEventListener('pointerdown', e => {
+    if (e.button && e.button !== 0) return;
+    const chip = e.target.closest('.schip'); if (!chip) return;
+    if (e.pointerType !== 'touch') e.preventDefault(); // בלי סימון טקסט בעכבר
+    beginPointer(e, { kind: 'chip', id: chip.dataset.sid, i: null, el: chip });
+  });
+  window.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    drag.x = e.clientX; drag.y = e.clientY;
+    const dist = Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy);
+    if (!drag.started) {
+      if (drag.type === 'touch') { if (dist > 10) endDrag(); return; }
+      if (dist > 6) startDrag(); else return;
+    }
+    e.preventDefault(); moveGhost(e.clientX, e.clientY);
+    if (!scrollRaf) scrollRaf = requestAnimationFrame(autoScroll);
+  }, { passive: false });
+  window.addEventListener('pointerup', e => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    if (drag.started) {
+      const t = seatAt(e.clientX, e.clientY), d = drag;
+      const toTray = d.kind === 'seat' && t === null && overTray(e.clientX, e.clientY);
+      lastDragEnd = Date.now(); endDrag();
+      if (d.kind === 'chip') { if (t !== null) placeStudent(d.id, t); }
+      else if (toTray) unseatSeat(d.i);
+      else if (t !== null && t !== d.i) { selSeat = null; if (isLocked(t)) toast('המושב נעול. אפשר לבטל את הנעילה בלחיצה על המנעול.'); else { swapSeats(d.i, t); toast(S.assign[d.i] ? 'המקומות הוחלפו' : `${nameOf(S.assign[t])} עבר/ה למושב`); } }
+    } else endDrag();
+  });
+  window.addEventListener('pointercancel', () => endDrag());
+  window.addEventListener('touchmove', e => { if (drag && drag.started) e.preventDefault(); }, { passive: false });
+  $('#selBar').addEventListener('click', e => {
+    if (e.target.closest('[data-sellock]') && selSeat !== null) toggleLock(selSeat);
+    else if (e.target.closest('[data-selout]') && selSeat !== null) unseatSeat(selSeat);
+    else if (e.target.closest('[data-selcancel]')) { selSeat = null; pickId = null; renderChart(); }
+  });
+  tray.addEventListener('click', e => {
+    if (e.target.closest('[data-undo]')) { undoMove(); return; }
+    const chip = e.target.closest('.schip'); if (!chip) return;
+    if (Date.now() - lastDragEnd < 300) return;
+    chipTap(chip.dataset.sid);
+  });
+  tray.addEventListener('contextmenu', e => { if (e.target.closest('.schip')) e.preventDefault(); });
+  tray.addEventListener('keydown', e => { if (e.key === 'Escape' && pickId) { pickId = null; renderChart(); } });
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'z' || e.key === 'Z' || e.key === 'ז') && !e.target.closest('input,textarea,select')) { e.preventDefault(); undoMove(); }
+  });
+  const markTouch = () => { if (!document.body.classList.contains('touch-ui')) { document.body.classList.add('touch-ui'); const sub = $('#tray .sub'); if (sub && unplacedIds().length) sub.textContent = 'לחיצה ארוכה על שם וגרירה למושב, או לחיצה על השם ואז על המושב'; } };
+  if (window.matchMedia && matchMedia('(pointer:coarse)').matches) markTouch();
+  window.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') markTouch(); }, true);
+  chart.addEventListener('contextmenu', e => { if (e.target.closest('.seat')) e.preventDefault(); });
+  chart.addEventListener('click', e => {
+    const lk = e.target.closest('[data-lock]');
+    if (lk) {
+      toggleLock(+lk.dataset.lock); return;
+    }
+    if (Date.now() - lastDragEnd < 300) return;
+    const seat = e.target.closest('.seat'); if (!seat) return;
+    seatTap(+seat.dataset.i);
+  });
+  chart.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('seat')) { e.preventDefault(); const i = +e.target.dataset.i; seatTap(i); const el = $(`#chart .seat[data-i="${i}"]`); el && el.focus(); }
+    if (e.key === 'Escape' && (selSeat !== null || pickId)) { selSeat = null; pickId = null; renderChart(); }
+  });
+}
+
+/* ============================ ממשק ============================ */
+function selectTab(name) {
+  $$('.tab').forEach(t => t.setAttribute('aria-selected', t.id === 'tab-' + name ? 'true' : 'false'));
+  $$('.side .panel').forEach(p => p.hidden = p.id !== 'p-' + name);
+}
+function syncControls() {
+  const L = S.layout;
+  $$('#laySeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === L.type));
+  $$('#modeSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S.mode));
+  $$('#viewSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S.view));
+  $('#inRows').value = L.rows; $('#inCols').value = L.cols; $('#inGroup').value = L.group; $('#inDouble').checked = !!L.double;
+  $('#inTeacher').value = L.teacher; $('#inDoor').value = L.door; $('#inMeta').checked = S.showMeta;
+  $('#clsName').value = S.className; $('#inKeep').checked = !!S.keepPlaced;
+  const lab = { pairs: ['מספר שורות', 'טורים של זוגות'], rows: ['מספר שורות', 'תלמידים בשורה'], groups: ['שורות של קבוצות', 'קבוצות בשורה'], u: ['מקומות בכל צד', 'מקומות בשורה האחורית'] }[L.type];
+  $('#lblRows').textContent = lab[0]; $('#lblCols').textContent = lab[1];
+  $('#wrapGroup').hidden = L.type !== 'groups'; $('#wrapDouble').hidden = L.type !== 'u';
+}
+function renderSeatSummary() {
+  const n = ROOM.seats.length, k = S.students.length;
+  const el = $('#seatSummary');
+  el.className = 'alert ' + (k > n ? 'warn' : 'info');
+  el.innerHTML = icon(k > n ? 'alert' : 'info') + `<div><b>${n} מקומות</b> ל-${k} תלמידים${k > n ? ` – חסרים ${k - n} מקומות` : n - k > 0 ? ` (${n - k} פנויים)` : ''}</div>`;
+}
+function renderAll() {
+  if (!ROOM) buildRoom();
+  if (S.assign.length !== ROOM.seats.length) { const a = S.assign.slice(0, ROOM.seats.length); while (a.length < ROOM.seats.length) a.push(null); S.assign = a; }
+  renderStudents(); renderConsForm(); renderCons(); renderVersions(); renderSeatSummary(); renderChart(); renderStatus();
+}
+function bind() {
+  $$('.tab').forEach(t => t.onclick = () => selectTab(t.id.slice(4)));
+  $('.tabs').addEventListener('keydown', e => {
+    const tabs = $$('.tab'); const i = tabs.indexOf(document.activeElement); if (i < 0) return;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { const d = e.key === 'ArrowLeft' ? 1 : -1; const n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); n.click(); }
+  });
+  $('#btnSample').onclick = loadSample;
+  $('#btnFile').onclick = () => $('#fileIn').click();
+  $('#fileIn').onchange = e => { handleFile(e.target.files[0]); e.target.value = ''; };
+  $('#btnPaste').onclick = () => {
+    const txt = $('#pasteIn').value; if (!txt.trim()) { toast('אין טקסט להדבקה'); return; }
+    const n = addStudents(rowsToStudents(splitText(txt)), $('#pasteReplace').checked);
+    if (n) { $('#pasteIn').value = ''; }
+  };
+  $('#addForm').onsubmit = e => {
+    e.preventDefault();
+    const name = $('#addName').value.trim();
+    if (!name) { toast('צריך להקליד שם'); $('#addName').focus(); return; }
+    if (S.students.some(s => s.name === name)) { toast('השם כבר ברשימה'); return; }
+    S.students.push({ id: uid('s'), name, gender: $('#addGender').value, level: $('#addLevel').value ? +$('#addLevel').value : '' });
+    $('#addName').value = ''; $('#addName').focus();
+    afterStudentsChange(); persist();
+  };
+  $('#studentList').addEventListener('change', e => {
+    const li = e.target.closest('li[data-id]'); if (!li) return;
+    const s = byId(li.dataset.id); const f = e.target.dataset.f; if (!s || !f) return;
+    let v = e.target.value; if (f === 'name') { v = v.trim(); if (!v) { e.target.value = s.name; return; } }
+    if (f === 'level') v = v ? +v : '';
+    s[f] = v; renderStudents(); renderConsForm(); renderCons(); renderChart(); renderStatus(); persist();
+  });
+  $('#studentList').addEventListener('click', async e => {
+    const b = e.target.closest('[data-del]'); if (!b) return;
+    const s = byId(b.dataset.del); if (!s) return;
+    S.students = S.students.filter(x => x.id !== s.id);
+    afterStudentsChange(); persist(); toast(`${s.name} הוסר/ה מהרשימה`);
+  });
+  $('#btnWipe').onclick = async () => {
+    const ok = await ask({ title: 'מחיקת כל הנתונים', text: 'כל התלמידים, האילוצים, הסידורים והגרסאות יימחקו מהמכשיר הזה. אי אפשר לשחזר.', ok: 'מחיקה', danger: true });
+    if (!ok) return;
+    await DataBridge.clear();
+    Object.assign(S, { students: [], constraints: [], notes: '', assign: [], locks: {}, unseated: [], versions: [], className: '' });
+    lastReport = null; ROOM = null; renderAll(); syncControls(); toast('כל הנתונים נמחקו מהמכשיר');
+  };
+  // מבנה
+  $('#laySeg').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const L = S.layout; L.type = b.dataset.v;
+    if (L.type === 'pairs') { L.cols = 4; L.rows = 4; } else if (L.type === 'rows') { L.cols = 7; L.rows = 4; } else if (L.type === 'groups') { L.group = 4; L.cols = 4; L.rows = 2; } else { L.rows = 6; L.cols = 7; L.double = true; }
+    syncControls(); layoutChanged(); persist();
+    if (S.students.length) fitLayout();
+  };
+  const num = (sel, key) => $(sel).onchange = () => { S.layout[key] = clamp(parseInt($(sel).value) || 1, 1, 12); $(sel).value = S.layout[key]; layoutChanged(); persist(); };
+  num('#inRows', 'rows'); num('#inCols', 'cols');
+  $('#inGroup').onchange = () => { S.layout.group = +$('#inGroup').value; layoutChanged(); persist(); };
+  $('#inDouble').onchange = () => { S.layout.double = $('#inDouble').checked; layoutChanged(); persist(); };
+  $('#inTeacher').onchange = () => { S.layout.teacher = $('#inTeacher').value; ROOM = null; buildRoom(); renderAll(); persist(); };
+  $('#inDoor').onchange = () => { S.layout.door = $('#inDoor').value; ROOM = null; buildRoom(); renderAll(); persist(); };
+  $('#btnFit').onclick = fitLayout;
+  // אילוצים
+  $('#cType').onchange = renderConsForm;
+  $('#consForm').onsubmit = e => {
+    e.preventDefault();
+    const type = $('#cType').value, a = $('#cA').value, b = $('#cB').value;
+    const pair = ['apart', 'near'].includes(type);
+    if (!a || (pair && !b)) { toast('צריך לבחור תלמידים'); return; }
+    if (pair && a === b) { toast('צריך לבחור שני תלמידים שונים'); return; }
+    const same = c => c.type === type && ((c.a === a && c.b === b) || (pair && c.a === b && c.b === a) || (!pair && c.a === a));
+    if (S.constraints.some(same)) { toast('האילוץ כבר קיים'); return; }
+    const opp = { apart: 'near', near: 'apart' }[type];
+    if (opp && S.constraints.some(c => c.type === opp && ((c.a === a && c.b === b) || (c.a === b && c.b === a)))) {
+      showAlert('err', `<b>סתירה:</b> כבר הוגדר ש${esc(nameOf(a))} ו${esc(nameOf(b))} ${opp === 'near' ? 'צריכים לשבת ליד' : 'לא יושבים ליד'}. אפשר למחוק את האילוץ הקודם.`);
+      return;
+    }
+    S.constraints.push({ id: uid('c'), type, a, b: pair ? b : null });
+    renderCons(); renderChart(); renderStatus(); persist();
+    toast('האילוץ נוסף. בסידור הבא הוא יילקח בחשבון.');
+  };
+  $('#consList').onclick = e => {
+    const b = e.target.closest('[data-cdel]');
+    if (b) { S.constraints = S.constraints.filter(c => c.id !== b.dataset.cdel); renderCons(); renderChart(); renderStatus(); persist(); return; }
+    if (e.target.closest('[data-unlockall]')) { S.locks = {}; renderCons(); renderChart(); persist(); toast('כל הנעילות בוטלו'); }
+  };
+  $('#notesIn').oninput = () => { S.notes = $('#notesIn').value; renderNotes(); persist(); };
+  // גרסאות
+  $('#verForm').onsubmit = e => { e.preventDefault(); saveVersion($('#verName').value); $('#verName').value = ''; };
+  $('#verList').onclick = async e => {
+    const l = e.target.closest('[data-vload]'), d = e.target.closest('[data-vdel]');
+    if (l) loadVersion(l.dataset.vload);
+    if (d) {
+      const v = S.versions.find(x => x.id === d.dataset.vdel); if (!v) return;
+      const ok = await ask({ title: 'מחיקת גרסה', text: `למחוק את הגרסה "${v.name}"?`, ok: 'מחיקה', danger: true });
+      if (ok) { S.versions = S.versions.filter(x => x.id !== v.id); renderVersions(); persist(); toast('הגרסה נמחקה'); }
+    }
+  };
+  // סרגל
+  $('#modeSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.mode = b.dataset.v; syncControls(); persist(); renderNotes(); };
+  $('#viewSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.view = b.dataset.v; syncControls(); renderChart(); persist(); };
+  $('#inMeta').onchange = () => { S.showMeta = $('#inMeta').checked; renderChart(); persist(); };
+  $('#clsName').oninput = () => { S.className = $('#clsName').value; persist(); };
+  $('#btnGen').onclick = generate;
+  $('#inKeep').onchange = e => { S.keepPlaced = e.target.checked; persist(); toast(S.keepPlaced ? 'בסידור האוטומטי הבא, מי שכבר במפה יישאר במקום' : 'הסידור האוטומטי יסדר מחדש את כולם (חוץ מהנעולים)'); };
+  $('#btnPresent').onclick = () => {
+    const on = document.body.classList.toggle('present');
+    $('#btnPresent').setAttribute('aria-pressed', on);
+    $('#btnPresent span').textContent = on ? 'חזרה להגדרות' : 'הגדלת המפה';
+    renderChart(); if (on) $('.chart-card').scrollIntoView({ behavior: 'smooth' });
+  };
+  $('#btnSaveVer').onclick = async () => {
+    if (!S.assign.some(Boolean)) { toast('עדיין אין סידור לשמירה. קודם "סידור אוטומטי".'); return; }
+    const def = `${S.className ? S.className + ' – ' : ''}סידור ${S.versions.length + 1} (${new Date().toLocaleDateString('he-IL')})`;
+    const name = await ask({ title: 'שמירת גרסה', text: 'שם לגרסה:', input: def, ok: 'שמירה' });
+    if (name !== null) saveVersion(name || def);
+  };
+  $('#btnPrint').onclick = doPrint;
+  $('#btnCsv').onclick = exportCsv;
+  $('#btnReset').onclick = async () => {
+    if (!S.assign.some(Boolean)) { toast('אין סידור לנקות'); return; }
+    const ok = await ask({ title: 'ניקוי הסידור', text: 'המפה תתרוקן והנעילות יבוטלו. הרשימה, האילוצים והגרסאות השמורות נשארים.', ok: 'ניקוי' });
+    if (!ok) return;
+    pushUndo();
+    S.assign = new Array(ROOM.seats.length).fill(null); S.locks = {}; S.unseated = []; lastReport = null; selSeat = null; pickId = null;
+    renderAll(); persist(); toast('הסידור נוקה');
+  };
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!printing) renderChart(); }, 120); });
+  initDrag();
+}
+async function init() {
+  const st = await DataBridge.load();
+  if (st && st.v === 1) {
+    ['students', 'layout', 'constraints', 'notes', 'mode', 'assign', 'locks', 'unseated', 'view', 'showMeta', 'className', 'versions', 'keepPlaced'].forEach(k => { if (st[k] !== undefined) S[k] = st[k]; });
+    S.layout = Object.assign({ type: 'pairs', rows: 4, cols: 4, group: 4, double: false, teacher: 'center', door: 'front-right' }, S.layout);
+    if (S.assign.some(Boolean)) lastReport = true;
+  }
+  bind(); syncControls(); buildRoom(); renderAll();
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
